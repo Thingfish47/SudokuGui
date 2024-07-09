@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="fAbFE4" name="Sudoku" projectType="guiapp" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
+  <MAINGROUP id="quTJzA" name="Sudoku">
+    <GROUP id="{D1427E47-15E5-3A02-F2E7-A726EB681D61}" name="Source">
+      <FILE id="uWq276" name="Grid.cpp" compile="1" resource="0" file="Source/Grid.cpp"/>
+      <FILE id="h7e7pf" name="Grid.h" compile="0" resource="0" file="Source/Grid.h"/>
+      <FILE id="rhY4L7" name="IniFile.cpp" compile="1" resource="0" file="Source/IniFile.cpp"/>
+      <FILE id="yRX2sR" name="IniFile.h" compile="0" resource="0" file="Source/IniFile.h"/>
+      <FILE id="tMRbNF" name="SudokuGame.cpp" compile="1" resource="0" file="Source/SudokuGame.cpp"/>
+      <FILE id="R3PYsM" name="SudokuGame.h" compile="0" resource="0" file="Source/SudokuGame.h"/>
+      <FILE id="l3a4qj" name="Sudoku.cpp" compile="1" resource="0" file="Source/Sudoku.cpp"/>
+      <FILE id="scqlij" name="Sudoku.h" compile="0" resource="0" file="Source/Sudoku.h"/>
+      <FILE id="ratjVt" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <EXPORTFORMATS>
+    <VS2022 targetFolder="Builds/VisualStudio2022">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Sudoku"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="Sudoku"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2022>
+  </EXPORTFORMATS>
+</JUCERPROJECT>
