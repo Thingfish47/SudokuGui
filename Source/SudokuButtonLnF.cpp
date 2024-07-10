@@ -8,6 +8,7 @@
   ==============================================================================
 */
 
+#include "SudokuButton.h"
 #include "SudokuButtonLnF.h"
 
 
@@ -46,6 +47,11 @@ void SudokuButtonLnF::drawButtonBackground(Graphics& g, Button& button, const Co
 
 void SudokuButtonLnF::drawButtonText(Graphics& g, TextButton& button, bool, bool)
 {
+    SudokuButton* sb = (SudokuButton*) &button;
+    //String txt = sb->getButtonText();
+    //if (txt.compare ("0") == 0)
+    if (sb->getCurrentValue() == 0)
+        return;
     Font font(button.getHeight());
     g.setFont(font);
     g.setColour(button.findColour(button.getToggleState() ? TextButton::textColourOnId

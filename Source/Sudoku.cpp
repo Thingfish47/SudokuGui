@@ -15,16 +15,17 @@
 Sudoku::Sudoku()
 {
     //srand(time(0));
-
+    setWantsKeyboardFocus(true);
     grid.reset (new SudokuGrid());
     for (int i = 0; i < N * N; i++)
     {
-        Squares[i].reset(new SudokuButton());
-        addAndMakeVisible(Squares[i].get());
         int val = grid->getValue(i / N, i % N);
-        String number = String(val);
+        Squares[i].reset(new SudokuButton(val));
+        Squares[i]->setCurrentValue(val);
+        addAndMakeVisible(Squares[i].get());
         Squares[i]->setLookAndFeel((LookAndFeel *) &LnF);
-        Squares[i]->setButtonText(number);
+        //String txt = String(val);
+        //Squares[i]->setButtonText(txt);
         Squares[i]->setClickingTogglesState(true);
         Squares[i]->setColour(TextButton::buttonOnColourId, Colours::darkgrey);
         Squares[i]->setColour(TextButton::buttonColourId, Colours::grey);
@@ -32,8 +33,9 @@ Sudoku::Sudoku()
         Squares[i]->setColour(TextButton::textColourOffId, Colours::black);
         Squares[i]->addListener(this);
         Squares[i]->setRadioGroupId(1);
-
     }
+    Squares[1]->setUnknown();
+    Squares[10]->setUnknown();
     bnQuit.reset(new TextButton("Quit"));
     addAndMakeVisible(bnQuit.get());
     bnQuit->setColour(TextButton::buttonOnColourId, Colours::red);
@@ -84,6 +86,23 @@ void Sudoku::paint (juce::Graphics& g)
     g.drawRect (box2, 4);
 }
 
+bool Sudoku::keyPressed(const juce::KeyPress& key)
+{
+
+    ModifierKeys mods = key.getModifiers();
+    if (mods.isAnyModifierKeyDown() || mods.isAnyMouseButtonDown())
+        return true;
+    if (!Squares[CurrentSquare]->isUnknown())
+        return false;
+    juce_wchar ch = key.getTextCharacter();
+    if (ch >= '1' && ch <= '9')
+    {
+        int number = ch - '0';
+        Squares[CurrentSquare]->setCurrentValue(number);
+    }
+    return false;
+}
+
 void Sudoku::buttonClicked(Button* buttonThatWasClicked)
 {
     if (buttonThatWasClicked == bnQuit.get())
@@ -104,6 +123,7 @@ void Sudoku::handleCurrentSquare()
 {
     DBG (CurrentSquare << "  " << CurrentSquare / N << " " << CurrentSquare % N);
 }
+
 void Sudoku::handleQuit()
 {
     JUCEApplication::getInstance()->systemRequestedQuit();

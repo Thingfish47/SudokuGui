@@ -37,7 +37,7 @@ public:
     void paint (juce::Graphics&) override;
     void resized() override;
     void buttonClicked(Button* buttonThatWasClicked) override;
-
+    bool keyPressed(const juce::KeyPress& key) override;
     void handleQuit();
     void handleCurrentSquare();
 
