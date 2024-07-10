@@ -4,6 +4,13 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1">
   <MAINGROUP id="quTJzA" name="Sudoku">
     <GROUP id="{D1427E47-15E5-3A02-F2E7-A726EB681D61}" name="Source">
+      <FILE id="MArDte" name="SudokuButtonLnF.cpp" compile="1" resource="0"
+            file="Source/SudokuButtonLnF.cpp"/>
+      <FILE id="Kx0RzD" name="SudokuButtonLnF.h" compile="0" resource="0"
+            file="Source/SudokuButtonLnF.h"/>
+      <FILE id="Zcn3Lp" name="SudokuButton.cpp" compile="1" resource="0"
+            file="Source/SudokuButton.cpp"/>
+      <FILE id="f7Z9V0" name="SudokuButton.h" compile="0" resource="0" file="Source/SudokuButton.h"/>
       <FILE id="uWq276" name="Grid.cpp" compile="1" resource="0" file="Source/Grid.cpp"/>
       <FILE id="h7e7pf" name="Grid.h" compile="0" resource="0" file="Source/Grid.h"/>
       <FILE id="rhY4L7" name="IniFile.cpp" compile="1" resource="0" file="Source/IniFile.cpp"/>

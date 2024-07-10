@@ -14,13 +14,16 @@
 //==============================================================================
 Sudoku::Sudoku()
 {
+    //srand(time(0));
+
     grid.reset (new SudokuGrid());
     for (int i = 0; i < N * N; i++)
     {
-        Squares[i].reset(new TextButton());
+        Squares[i].reset(new SudokuButton());
         addAndMakeVisible(Squares[i].get());
         int val = grid->getValue(i / N, i % N);
         String number = String(val);
+        Squares[i]->setLookAndFeel((LookAndFeel *) &LnF);
         Squares[i]->setButtonText(number);
         Squares[i]->setClickingTogglesState(true);
         Squares[i]->setColour(TextButton::buttonOnColourId, Colours::darkgrey);
@@ -31,6 +34,12 @@ Sudoku::Sudoku()
         Squares[i]->setRadioGroupId(1);
 
     }
+    bnQuit.reset(new TextButton("Quit"));
+    addAndMakeVisible(bnQuit.get());
+    bnQuit->setColour(TextButton::buttonOnColourId, Colours::red);
+    bnQuit->setColour(TextButton::buttonColourId, Colours::green);
+    bnQuit->addListener(this);
+
     IniReg.reset(new IniFile(INIFILENAME));
     String iniHeight = IniReg->Read(SCREENHEIGHT, "600");
     String iniWidth = IniReg->Read(SCREENWIDTH, "400");
@@ -77,7 +86,27 @@ void Sudoku::paint (juce::Graphics& g)
 
 void Sudoku::buttonClicked(Button* buttonThatWasClicked)
 {
+    if (buttonThatWasClicked == bnQuit.get())
+        handleQuit();
+    else
+    {
+        for (int i=0 ; i<N*N ; i++)
+            if (buttonThatWasClicked == Squares[i].get())
+            {
+                CurrentSquare = i;
+                handleCurrentSquare();
+                return;
+            }
+    }
+}
 
+void Sudoku::handleCurrentSquare()
+{
+    DBG (CurrentSquare << "  " << CurrentSquare / N << " " << CurrentSquare % N);
+}
+void Sudoku::handleQuit()
+{
+    JUCEApplication::getInstance()->systemRequestedQuit();
 }
 
 void Sudoku::resized()
@@ -103,6 +132,11 @@ void Sudoku::resized()
             Squares[idx++]->setBounds(row.removeFromLeft(size).reduced(2));
         }
     }
+    auto quit = area.removeFromLeft(size * 2).reduced(4);
+    quit.removeFromTop(size / 5);
+    quit.removeFromBottom(size / 5);
+    bnQuit->setBounds(quit);
+
 }
 
 

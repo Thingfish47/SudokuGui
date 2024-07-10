@@ -13,6 +13,8 @@
 #include <JuceHeader.h>
 #include "IniFile.h"
 #include "grid.h"
+#include "SudokuButton.h"
+#include "SudokuButtonLnF.h"
 
 using namespace juce;
 
@@ -36,12 +38,19 @@ public:
     void resized() override;
     void buttonClicked(Button* buttonThatWasClicked) override;
 
+    void handleQuit();
+    void handleCurrentSquare();
+
+    SudokuButtonLnF                 LnF;
+
 private:
+    int     CurrentSquare;
+    int     Height;
+    int     Width;
     std::unique_ptr<SudokuGrid>     grid;
     std::unique_ptr<IniFile>        IniReg;
-    int                             Height;
-    int                             Width;
-    std::unique_ptr<TextButton>     Squares[N * N];
+    std::unique_ptr<TextButton>     bnQuit;
+    std::unique_ptr<SudokuButton>     Squares[N * N];
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Sudoku)
 };
