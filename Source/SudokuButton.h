@@ -21,6 +21,10 @@ public:
     ~SudokuButton() {};
 
     void    setCurrentValue (int x);
+    bool    getNote(int number);
+    void    toggleNote (int x);
+    void    clearNote (int x);
+    int     countNotes();
     void    setUnknown();
     int     getActualValue()    { return ActualValue; }
     int     getCurrentValue()   { return CurrentValue; }
@@ -29,4 +33,5 @@ private:
     bool    Unknown;
     int     ActualValue;
     int     CurrentValue;
+    bool    Notes[9];
 };

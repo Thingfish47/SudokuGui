@@ -8,11 +8,12 @@
   ==============================================================================
 */
 
+#include "Sudoku.h"
 #include "SudokuButton.h"
 #include "SudokuButtonLnF.h"
 
 
-void SudokuButtonLnF::drawButtonBackground(Graphics& g, Button& button, const Colour& backgroundColour, bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
+void SudokuButtonLnF::drawButtonBackground(Graphics& g, Button& button, const Colour& backgroundColour, bool /*shouldDrawButtonAsHighlighted*/, bool /*shouldDrawButtonAsDown*/)
 {
     const int width = button.getWidth();
     const int height = button.getHeight();
@@ -28,15 +29,15 @@ void SudokuButtonLnF::drawButtonBackground(Graphics& g, Button& button, const Co
 
     Colour bc(backgroundColour.withMultipliedSaturation(0.3f));
 
-    if (shouldDrawButtonAsHighlighted)
-    {
-        if (shouldDrawButtonAsDown)
-            bc = bc.brighter();
-        else if (bc.getBrightness() > 0.5f)
-            bc = bc.darker(0.1f);
-        else
-            bc = bc.brighter(0.1f);
-    }
+    //if (shouldDrawButtonAsHighlighted)
+    //{
+    //    if (shouldDrawButtonAsDown)
+    //        bc = bc.brighter();
+    //    else if (bc.getBrightness() > 0.5f)
+    //        bc = bc.darker(0.1f);
+    //    else
+    //        bc = bc.brighter(0.1f);
+    //}
 
     g.setColour(bc);
     g.fillPath(p);
@@ -48,11 +49,25 @@ void SudokuButtonLnF::drawButtonBackground(Graphics& g, Button& button, const Co
 void SudokuButtonLnF::drawButtonText(Graphics& g, TextButton& button, bool, bool)
 {
     SudokuButton* sb = (SudokuButton*) &button;
-    //String txt = sb->getButtonText();
-    //if (txt.compare ("0") == 0)
-    if (sb->getCurrentValue() == 0)
+
+    if (sb->getCurrentValue() == 0)     //  Draw notes.
+    {
+        if (sb->countNotes() == 0)
+            return;
+        Font font((float) (sb->getHeight() / 3));
+        g.setColour(Colours::black);
+        int Third = sb->getHeight() / 3;
+        for (int i=0 ; i<N ; i++)
+            if (sb->getNote(i+1))
+            {
+                String txt = String(i + 1);
+                int Row = i / 3;
+                int Col = i % 3;
+                g.drawText(txt, Col * Third, Row * Third, Third, Third, Justification::centred, false);
+            }
         return;
-    Font font(button.getHeight());
+    }
+    Font font((float) button.getHeight());
     g.setFont(font);
     g.setColour(button.findColour(button.getToggleState() ? TextButton::textColourOnId
         : TextButton::textColourOffId)

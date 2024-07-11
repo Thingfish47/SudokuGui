@@ -232,9 +232,6 @@
     <ClCompile Include="..\..\Source\IniFile.cpp">
       <Filter>Sudoku\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\SudokuGame.cpp">
-      <Filter>Sudoku\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Sudoku.cpp">
       <Filter>Sudoku\Source</Filter>
     </ClCompile>
@@ -1585,9 +1582,6 @@
       <Filter>Sudoku\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\IniFile.h">
-      <Filter>Sudoku\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\SudokuGame.h">
       <Filter>Sudoku\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Sudoku.h">

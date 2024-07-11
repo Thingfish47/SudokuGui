@@ -15,8 +15,6 @@
       <FILE id="h7e7pf" name="Grid.h" compile="0" resource="0" file="Source/Grid.h"/>
       <FILE id="rhY4L7" name="IniFile.cpp" compile="1" resource="0" file="Source/IniFile.cpp"/>
       <FILE id="yRX2sR" name="IniFile.h" compile="0" resource="0" file="Source/IniFile.h"/>
-      <FILE id="tMRbNF" name="SudokuGame.cpp" compile="1" resource="0" file="Source/SudokuGame.cpp"/>
-      <FILE id="R3PYsM" name="SudokuGame.h" compile="0" resource="0" file="Source/SudokuGame.h"/>
       <FILE id="l3a4qj" name="Sudoku.cpp" compile="1" resource="0" file="Source/Sudoku.cpp"/>
       <FILE id="scqlij" name="Sudoku.h" compile="0" resource="0" file="Source/Sudoku.h"/>
       <FILE id="ratjVt" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>

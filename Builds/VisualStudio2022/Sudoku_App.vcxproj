@@ -145,7 +145,6 @@
     <ClCompile Include="..\..\Source\SudokuButton.cpp"/>
     <ClCompile Include="..\..\Source\Grid.cpp"/>
     <ClCompile Include="..\..\Source\IniFile.cpp"/>
-    <ClCompile Include="..\..\Source\SudokuGame.cpp"/>
     <ClCompile Include="..\..\Source\Sudoku.cpp"/>
     <ClCompile Include="..\..\Source\Main.cpp"/>
     <ClCompile Include="C:\JUCE\modules\juce_core\containers\juce_AbstractFifo.cpp">
@@ -1387,7 +1386,6 @@
     <ClInclude Include="..\..\Source\SudokuButton.h"/>
     <ClInclude Include="..\..\Source\Grid.h"/>
     <ClInclude Include="..\..\Source\IniFile.h"/>
-    <ClInclude Include="..\..\Source\SudokuGame.h"/>
     <ClInclude Include="..\..\Source\Sudoku.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_core\containers\juce_AbstractFifo.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_core\containers\juce_Array.h"/>

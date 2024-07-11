@@ -23,6 +23,9 @@ using namespace juce;
 #define     SCREENWIDTH "Width"
 #define     SCREENHEIGHT "Height"
 
+#define     WIDTH           960
+#define     HEIGHT          710
+
 //==============================================================================
 /*
 */
@@ -38,9 +41,14 @@ public:
     void resized() override;
     void buttonClicked(Button* buttonThatWasClicked) override;
     bool keyPressed(const juce::KeyPress& key) override;
+    void createButtons();
     void handleQuit();
+    void handleClear();
+    void removeDigits(int numToRemove);
+    void handleNumberEntry(int number);
     void handleCurrentSquare();
-
+    void setSolved();
+    bool solved();
     SudokuButtonLnF                 LnF;
 
 private:
@@ -49,8 +57,20 @@ private:
     int     Width;
     std::unique_ptr<SudokuGrid>     grid;
     std::unique_ptr<IniFile>        IniReg;
+    std::unique_ptr<Label>          lbStatus;
     std::unique_ptr<TextButton>     bnQuit;
-    std::unique_ptr<SudokuButton>     Squares[N * N];
+    std::unique_ptr<TextButton>     bnOne;
+    std::unique_ptr<TextButton>     bnTwo;
+    std::unique_ptr<TextButton>     bnThree;
+    std::unique_ptr<TextButton>     bnFour;
+    std::unique_ptr<TextButton>     bnFive;
+    std::unique_ptr<TextButton>     bnSix;
+    std::unique_ptr<TextButton>     bnSeven;
+    std::unique_ptr<TextButton>     bnEight;
+    std::unique_ptr<TextButton>     bnNine;
+    std::unique_ptr<TextButton>     bnClear;
+    std::unique_ptr<TextButton>     bnNotes;
+    std::unique_ptr<SudokuButton>   bnCells[N * N];
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Sudoku)
 };
