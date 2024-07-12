@@ -14,22 +14,27 @@
 
 using namespace juce;
 
+class Sudoku;
+
 class SudokuButton : public TextButton
 {
 public:
-    SudokuButton(int);
+    SudokuButton(Sudoku*, int);
     ~SudokuButton() {};
 
     void    setCurrentValue (int x);
     bool    getNote(int number);
+    bool    isWrong();
     void    toggleNote (int x);
     void    clearNote (int x);
     int     countNotes();
     void    setUnknown();
+    bool    flaggingErrorsEnabled();
     int     getActualValue()    { return ActualValue; }
     int     getCurrentValue()   { return CurrentValue; }
     bool    isUnknown()         { return Unknown; }
 private:
+    Sudoku* pParent;
     bool    Unknown;
     int     ActualValue;
     int     CurrentValue;

@@ -1,6 +1,7 @@
 #pragma once
 
 #define		N	9
+#define		NS	3
 
 class SudokuGrid
 {

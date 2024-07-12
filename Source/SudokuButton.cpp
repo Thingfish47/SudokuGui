@@ -11,8 +11,9 @@
 #include "Sudoku.h"
 #include "SudokuButton.h"
 
-SudokuButton::SudokuButton(int Value)
+SudokuButton::SudokuButton(Sudoku* p, int Value)
 {
+    pParent = p;
     Unknown = false;
     for (int i = 0; i < N; i++)
         Notes[i] = false;
@@ -33,6 +34,17 @@ void SudokuButton::setCurrentValue(int Value)
         setButtonText(String(Value));
 }
 
+bool SudokuButton::isWrong()
+{
+    if (CurrentValue == 0)
+        return false;
+    return ActualValue != CurrentValue;
+}
+
+bool SudokuButton::flaggingErrorsEnabled()
+{
+    return pParent->flaggingErrorsEnabled();
+}
 void SudokuButton::setUnknown()
 {
     Unknown = true;

@@ -11,6 +11,8 @@
 #include "IniFile.h"
 #include "windows.h"
 #include "juceheader.h"
+
+
 IniFile::IniFile(std::string IniFileName)
 {
     IfileName = IniFileName;

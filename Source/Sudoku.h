@@ -20,9 +20,9 @@ using namespace juce;
 
 #define     VERSION_LIT     "Ver 3.3.1"
 #define     INIFILENAME     "\\Sudoku\\.ini"
-#define     SCREENWIDTH "Width"
-#define     SCREENHEIGHT "Height"
-
+#define     SHOWERRORS      "ShowErrors"
+#define     CHECKINGSTATE   "AllowChecking"
+#define     HILIGHTING      "AllowHilighting"
 #define     WIDTH           960
 #define     HEIGHT          710
 
@@ -37,6 +37,9 @@ public:
     Sudoku();
     ~Sudoku() override;
 
+public:     //  Functions
+    bool flaggingErrorsEnabled() { return cbErrorHilight->getToggleState(); }
+private:    //  Functions
     void paint (juce::Graphics&) override;
     void resized() override;
     void buttonClicked(Button* buttonThatWasClicked) override;
@@ -44,20 +47,34 @@ public:
     void createButtons();
     void handleQuit();
     void handleClear();
+    void handleCheck();
+    void handleCheckboxes();
     void removeDigits(int numToRemove);
     void handleNumberEntry(int number);
-    void handleCurrentSquare();
+    void handleCurrentSquare(int);
+    void hilightRow (int, bool);
+    void hilightCol (int, bool);
+    void hilightSquare (int, bool);
+    int  collToSquare(int);
     void setSolved();
     bool solved();
-    SudokuButtonLnF                 LnF;
-
-private:
-    int     CurrentSquare;
+    bool hilightingEnabled() { return cbCellHilight->getToggleState(); }
+public:     //  Data
+private:    //  Data
+    int     CurrentCell;
+    int     CurrentRow;
+    int     CurrentCol;
     int     Height;
     int     Width;
+    SudokuButtonLnF                 sbLnF;
+    NumberButtonLnF                 nbLnF;
     std::unique_ptr<SudokuGrid>     grid;
     std::unique_ptr<IniFile>        IniReg;
     std::unique_ptr<Label>          lbStatus;
+    std::unique_ptr<ToggleButton>   cbErrorHilight;
+    std::unique_ptr<ToggleButton>   cbCellHilight;
+    std::unique_ptr<ToggleButton>   cbChecking;
+    std::unique_ptr<TextButton>     bnCheck;
     std::unique_ptr<TextButton>     bnQuit;
     std::unique_ptr<TextButton>     bnOne;
     std::unique_ptr<TextButton>     bnTwo;

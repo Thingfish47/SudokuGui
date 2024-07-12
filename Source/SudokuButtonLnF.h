@@ -21,3 +21,11 @@ class SudokuButtonLnF : LookAndFeel_V2
     void drawButtonBackground (Graphics&, Button&, const Colour&, bool, bool)  override;
     void drawButtonText (Graphics&, TextButton&, bool, bool)  override;
 };
+
+
+class NumberButtonLnF : LookAndFeel_V2
+{
+    void drawButtonBackground (Graphics&, Button&, const Colour&, bool, bool)  override;
+    void drawButtonText (Graphics&, TextButton&, bool, bool)  override;
+};
+
