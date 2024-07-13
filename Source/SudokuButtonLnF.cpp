@@ -39,7 +39,7 @@ void SudokuButtonLnF::drawButtonText(Graphics& g, TextButton& button, bool, bool
         if (sb->countNotes() == 0)
             return;
         Font font((float) (sb->getHeight() / 3));
-        g.setColour(Colours::black);
+        g.setFont(font);
         int Third = sb->getHeight() / 3;
         for (int i=0 ; i<N ; i++)
             if (sb->getNote(i+1))
@@ -47,6 +47,7 @@ void SudokuButtonLnF::drawButtonText(Graphics& g, TextButton& button, bool, bool
                 String txt = String(i + 1);
                 int Row = i / 3;
                 int Col = i % 3;
+                g.setColour(sb->hilightingEnabledNote(i+1) ? Colours::white : Colours::black);
                 g.drawText(txt, Col * Third, Row * Third, Third, Third, Justification::centred, false);
             }
         return;

@@ -23,6 +23,8 @@ using namespace juce;
 #define     SHOWERRORS      "ShowErrors"
 #define     CHECKINGSTATE   "AllowChecking"
 #define     HILIGHTING      "AllowHilighting"
+#define     TIDYNOTES       "AllowNotesTidy"
+#define     LIGHTNESS       0.56f
 #define     WIDTH           960
 #define     HEIGHT          710
 
@@ -39,6 +41,8 @@ public:
 
 public:     //  Functions
     bool flaggingErrorsEnabled() { return cbErrorHilight->getToggleState(); }
+    bool hilightingEnabled() { return cbCellHilight->getToggleState(); }
+    bool hilightingEnabledNote(int);
 private:    //  Functions
     void paint (juce::Graphics&) override;
     void resized() override;
@@ -49,18 +53,21 @@ private:    //  Functions
     void handleClear();
     void handleCheck();
     void handleCheckboxes();
+    void handleHilightChange();
+    void tidyNotes();
     void removeDigits(int numToRemove);
     void handleNumberEntry(int number);
-    void handleCurrentSquare(int);
+    void handleCurrentCell(int);
     void hilightRow (int, bool);
     void hilightCol (int, bool);
     void hilightSquare (int, bool);
+    void hilightNumbers (int, bool);
     int  collToSquare(int);
     void setSolved();
     bool solved();
-    bool hilightingEnabled() { return cbCellHilight->getToggleState(); }
 public:     //  Data
 private:    //  Data
+    int     CurrentNumber;
     int     CurrentCell;
     int     CurrentRow;
     int     CurrentCol;
@@ -74,6 +81,7 @@ private:    //  Data
     std::unique_ptr<ToggleButton>   cbErrorHilight;
     std::unique_ptr<ToggleButton>   cbCellHilight;
     std::unique_ptr<ToggleButton>   cbChecking;
+    std::unique_ptr<ToggleButton>   cbNotesTidy;
     std::unique_ptr<TextButton>     bnCheck;
     std::unique_ptr<TextButton>     bnQuit;
     std::unique_ptr<TextButton>     bnOne;

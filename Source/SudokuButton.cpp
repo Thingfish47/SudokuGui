@@ -21,7 +21,7 @@ SudokuButton::SudokuButton(Sudoku* p, int Value)
     CurrentValue = Value;
     String txt = String(Value);
     setButtonText(txt);
-    setEnabled(false);
+    setEnabled(true);
 }
 
 void SudokuButton::setCurrentValue(int Value)
@@ -45,12 +45,28 @@ bool SudokuButton::flaggingErrorsEnabled()
 {
     return pParent->flaggingErrorsEnabled();
 }
+
+bool SudokuButton::hilightingEnabled()
+{
+    return pParent->hilightingEnabled();
+}
+
+bool SudokuButton::hilightingEnabledNote(int number)
+{
+    return pParent->hilightingEnabledNote(number);
+}
+
 void SudokuButton::setUnknown()
 {
     Unknown = true;
     CurrentValue = 0;
     setButtonText("");
-    setEnabled(true);
+}
+
+void SudokuButton::reset()
+{
+    CurrentValue = 0;
+    setButtonText("");
 }
 
 int SudokuButton::countNotes()
@@ -70,14 +86,12 @@ bool SudokuButton::getNote(int number)
 
 void SudokuButton::toggleNote(int number)
 {
-    DBG("toggleNote " << number);
     Notes[number - 1] = Notes[number - 1] ? false : true;
 }
 
 
 void SudokuButton::clearNote(int number)
 {
-    DBG("SetNote " << number);
     Notes[number - 1] = false;
 }
 

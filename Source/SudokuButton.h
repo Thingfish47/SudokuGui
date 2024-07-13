@@ -27,12 +27,15 @@ public:
     bool    isWrong();
     void    toggleNote (int x);
     void    clearNote (int x);
+    void    reset();
     int     countNotes();
     void    setUnknown();
     bool    flaggingErrorsEnabled();
-    int     getActualValue()    { return ActualValue; }
-    int     getCurrentValue()   { return CurrentValue; }
-    bool    isUnknown()         { return Unknown; }
+    bool    hilightingEnabled();
+    bool    hilightingEnabledNote(int);
+    int     getActualValue()    { return ActualValue;   }
+    int     getCurrentValue()   { return CurrentValue;  }
+    bool    isUnknown()         { return Unknown;       }
 private:
     Sudoku* pParent;
     bool    Unknown;
