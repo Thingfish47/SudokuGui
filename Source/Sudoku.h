@@ -51,22 +51,28 @@ private:    //  Functions
     void createButtons();
     void handleQuit();
     void handleClear();
+    void handleNew();
     void handleCheck();
+    void checkCompletedNumbers();
+    int  countCompletedNumbers(int number);
     void handleCheckboxes();
     void handleHilightChange();
     void tidyNotes();
-    void removeDigits(int numToRemove);
     void handleNumberEntry(int number);
     void handleCurrentCell(int);
     void hilightRow (int, bool);
     void hilightCol (int, bool);
     void hilightSquare (int, bool);
     void hilightNumbers (int, bool);
-    int  collToSquare(int);
+    int  cellToSquare(int);
+    bool isInSquare(int square, int number);
+    bool isInRow(int row, int number);
+    bool isInCol(int col, int number);
     void setSolved();
     bool solved();
 public:     //  Data
 private:    //  Data
+    int     NumberToRemove;
     int     CurrentNumber;
     int     CurrentCell;
     int     CurrentRow;
@@ -76,6 +82,8 @@ private:    //  Data
     SudokuButtonLnF                 sbLnF;
     NumberButtonLnF                 nbLnF;
     std::unique_ptr<SudokuGrid>     grid;
+    std::unique_ptr<SudokuGrid>     hold;
+    std::unique_ptr<SudokuGrid>     skel;
     std::unique_ptr<IniFile>        IniReg;
     std::unique_ptr<Label>          lbStatus;
     std::unique_ptr<ToggleButton>   cbErrorHilight;
@@ -84,6 +92,8 @@ private:    //  Data
     std::unique_ptr<ToggleButton>   cbNotesTidy;
     std::unique_ptr<TextButton>     bnCheck;
     std::unique_ptr<TextButton>     bnQuit;
+    std::unique_ptr<TextButton>     bnNotes;
+    std::unique_ptr<TextButton>     bnNew;
     std::unique_ptr<TextButton>     bnOne;
     std::unique_ptr<TextButton>     bnTwo;
     std::unique_ptr<TextButton>     bnThree;
@@ -94,7 +104,6 @@ private:    //  Data
     std::unique_ptr<TextButton>     bnEight;
     std::unique_ptr<TextButton>     bnNine;
     std::unique_ptr<TextButton>     bnClear;
-    std::unique_ptr<TextButton>     bnNotes;
     std::unique_ptr<SudokuButton>   bnCells[N * N];
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Sudoku)

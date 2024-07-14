@@ -24,6 +24,17 @@ SudokuButton::SudokuButton(Sudoku* p, int Value)
     setEnabled(true);
 }
 
+void SudokuButton::resetCell(int Value)
+{
+    Unknown = false;
+    for (int i = 0; i < N; i++)
+        Notes[i] = false;
+    ActualValue = Value;
+    CurrentValue = Value;
+    String txt = String(Value);
+    setButtonText(txt);
+}
+
 void SudokuButton::setCurrentValue(int Value)
 {
     CurrentValue = Value;
@@ -63,12 +74,12 @@ void SudokuButton::setUnknown()
     setButtonText("");
 }
 
-void SudokuButton::reset()
-{
-    CurrentValue = 0;
-    setButtonText("");
-}
-
+//void SudokuButton::reset()
+//{
+//    CurrentValue = 0;
+//    setButtonText("");
+//}
+//
 int SudokuButton::countNotes()
 {
     int count = 0;

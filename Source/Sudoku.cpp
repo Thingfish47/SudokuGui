@@ -16,23 +16,44 @@ Sudoku::Sudoku()
 {
     //srand(time(0));
     setWantsKeyboardFocus(true);
-    grid.reset (new SudokuGrid());
+    NumberToRemove = 45;
     for (int i = 0; i < N * N; i++)
     {
-        int val = grid->getValue(i / N, i % N);
-        bnCells[i].reset(new SudokuButton(this, val));
-        bnCells[i]->setCurrentValue(val);
+        bnCells[i].reset(new SudokuButton(this, 0));
         addAndMakeVisible(bnCells[i].get());
-        bnCells[i]->setLookAndFeel((LookAndFeel *) &sbLnF);
+        bnCells[i]->addListener(this);
+        //
+        bnCells[i]->setLookAndFeel((LookAndFeel*)&sbLnF);
         bnCells[i]->setColour(TextButton::buttonOnColourId, Colours::darkgrey);
         bnCells[i]->setColour(TextButton::buttonColourId, Colours::grey);
         bnCells[i]->setColour(TextButton::textColourOnId, Colours::black);
         bnCells[i]->setColour(TextButton::textColourOffId, Colours::black);
-        bnCells[i]->addListener(this);
     }
+    handleNew();
+    //grid.reset (new SudokuGrid());
+    //NumberToRemove = 45;
+    //    hold.reset(new SudokuGrid(grid.get()));
+    //    hold->removeDigits(NumberToRemove);
+    //    skel.reset(new SudokuGrid(hold.get()));
+    //} while (!hold->resolveSudoku());
+    //for (int i = 0; i < N * N; i++)
+    //{
+    //    int val = grid->getValue(i / N, i % N);
+    //    int xval = skel->getValue(i / N, i % N);
+    //    bnCells[i].reset(new SudokuButton(this, val));
+    //    //bnCells[i]->setCurrentValue(val);
+    //    if (xval == 0)
+    //        bnCells[i]->setUnknown();
+    //    addAndMakeVisible(bnCells[i].get());
+    //    bnCells[i]->setLookAndFeel((LookAndFeel *) &sbLnF);
+    //    bnCells[i]->setColour(TextButton::buttonOnColourId, Colours::darkgrey);
+    //    bnCells[i]->setColour(TextButton::buttonColourId, Colours::grey);
+    //    bnCells[i]->setColour(TextButton::textColourOnId, Colours::black);
+    //    bnCells[i]->setColour(TextButton::textColourOffId, Colours::black);
+    //    bnCells[i]->addListener(this);
+    //}
     CurrentCell = -1;
     //removeDigits(45);       //  45 seems insoluable.
-    removeDigits(40);
     createButtons();
     //
     lbStatus.reset(new Label("lbStatus"));
@@ -165,6 +186,8 @@ void Sudoku::buttonClicked(Button* buttonThatWasClicked)
         handleClear();
     else if (buttonThatWasClicked == bnCheck.get())
         handleCheck();
+    else if (buttonThatWasClicked == bnNew.get())
+        handleNew();
     else if (buttonThatWasClicked == bnOne.get())
         handleNumberEntry(1);
     else if (buttonThatWasClicked == bnTwo.get())
@@ -194,19 +217,61 @@ void Sudoku::buttonClicked(Button* buttonThatWasClicked)
     }
 }
 
-
-void Sudoku::removeDigits(int numToRemove)
+bool Sudoku::isInSquare(int square, int number)
 {
-    while (numToRemove > 0)
-    {
-        int cellId = rand() % (N * N);
-        if (!bnCells[cellId]->isUnknown())
-        {
-            bnCells[cellId]->setUnknown();
-            numToRemove--;
-        }
-    }
+    int topLeftR = (square / NS) * NS;
+    int topLeftC = (square % NS) * NS;
+    for (int r = 0; r < NS; r++)
+        for (int c = 0; c < NS; c++)
+            if (bnCells[((topLeftR + r) * N) + topLeftC + c]->getCurrentValue() == number)
+                return true;
+    return false;
 }
+
+bool Sudoku::isInRow(int row, int number)
+{
+    for (int i=0 ; i<N ; i++)
+        if (bnCells[(row * N) + i]->getCurrentValue() == number)
+            return true;
+    return false;
+}
+
+bool Sudoku::isInCol(int col, int number)
+{
+    for (int i = 0; i < N; i++)
+        if (bnCells[col + (i * N)]->getCurrentValue() == number)
+            return true;
+    return false;
+
+}
+
+//int Sudoku::countPossibles(int cell, int* posibilities)
+//{
+//    bool    possibles[N];
+//    
+//    for (int i = 0; i < N; i++)
+//        possibles[i] = true;
+//
+//    int row = cell / N;
+//    int col = cell % N;
+//    int square = cellToSquare(cell);
+//    for (int i = 0; i < N; i++)
+//    {
+//        if (isInSquare(square, i + 1))
+//            possibles[i] = false;
+//        else if (isInRow(row, i+1))
+//            possibles[i] = false;
+//        else if (isInCol(col, i+1))
+//            possibles[i] = false;
+//    }
+//    int posibleCount = 0;
+//    for (int i = 0; i < N; i++)
+//        if (possibles[i])
+//        {
+//            posibilities[posibleCount++] = i + 1;
+//        }
+//    return posibleCount;
+//}
 
 void Sudoku::handleCurrentCell(int newCurrent)
 {
@@ -217,7 +282,7 @@ void Sudoku::handleCurrentCell(int newCurrent)
     {
 	    hilightRow(CurrentRow, false);
 	    hilightCol(CurrentCol, false);
-	    hilightSquare(collToSquare(CurrentCell), false);
+	    hilightSquare(cellToSquare(CurrentCell), false);
 	    hilightNumbers (CurrentNumber, false);
 	    prevToggleState = bnCells[CurrentCell]->getToggleState();
 	    bnCells[CurrentCell]->setToggleState(false, dontSendNotification);
@@ -229,7 +294,7 @@ void Sudoku::handleCurrentCell(int newCurrent)
     CurrentCol = CurrentCell % N;
     if (hilightingEnabled())
     {
-        hilightSquare(collToSquare(CurrentCell), true);
+        hilightSquare(cellToSquare(CurrentCell), true);
         hilightRow(CurrentRow, true);
         hilightCol(CurrentCol, true);
         hilightNumbers(bnCells[CurrentCell]->getCurrentValue(), true);
@@ -246,6 +311,7 @@ void Sudoku::handleNumberEntry(int Number)
     if (bnNotes->getToggleState() == false)
     {
         bnCells[CurrentCell]->setCurrentValue(Number);
+        checkCompletedNumbers();
         if (solved())
             setSolved();
         else if (cbNotesTidy->getToggleState())
@@ -256,6 +322,30 @@ void Sudoku::handleNumberEntry(int Number)
         bnCells[CurrentCell]->toggleNote(Number);
         repaint();
     }
+}
+
+int Sudoku::countCompletedNumbers(int number)
+{
+    int count = 0;
+    for (int i = 0; i < N * N; i++)
+    {
+        if (bnCells[i]->getCurrentValue() == number)
+            count++;
+    }
+    return count;
+}
+
+void Sudoku::checkCompletedNumbers()
+{
+    bnOne->setVisible(countCompletedNumbers(1) != 9);
+    bnTwo->setVisible(countCompletedNumbers(2) != 9);
+    bnThree->setVisible(countCompletedNumbers(3) != 9);
+    bnFour->setVisible(countCompletedNumbers(4) != 9);
+    bnFive->setVisible(countCompletedNumbers(5) != 9);
+    bnSix->setVisible(countCompletedNumbers(6) != 9);
+    bnSeven->setVisible(countCompletedNumbers(7) != 9);
+    bnEight->setVisible(countCompletedNumbers(8) != 9);
+    bnNine->setVisible(countCompletedNumbers(9) != 9);
 }
 
 bool Sudoku::solved()
@@ -283,7 +373,7 @@ void Sudoku::tidyNotes()
         if (bnCells[col + (i * N)]->getNote(note))
             bnCells[col + (i * N)]->clearNote(note);
     }
-    int square = collToSquare(CurrentCell);
+    int square = cellToSquare(CurrentCell);
     int topLeftR = (square / NS) * NS;
     int topLeftC = (square % NS) * NS;
     for (int r = 0; r < NS; r++)
@@ -302,7 +392,7 @@ void Sudoku::setSolved()
     {
         hilightRow(CurrentRow, false);
         hilightCol(CurrentCol, false);
-        hilightSquare(collToSquare(CurrentCell), false);
+        hilightSquare(cellToSquare(CurrentCell), false);
         bnCells[CurrentCell]->setToggleState(false, dontSendNotification);
     }
     bnOne->setVisible(false);
@@ -361,10 +451,31 @@ void Sudoku::handleCheck()
     lbStatus->setText(msg, dontSendNotification);
 }
 
+void Sudoku::handleNew()
+{
+    grid.reset (new SudokuGrid());
+    hold.reset(new SudokuGrid(grid.get()));
+    hold->removeDigits(NumberToRemove);
+    skel.reset(new SudokuGrid(hold.get()));
+    for (int i = 0; i < N * N; i++)
+    {
+        int val = grid->getValue(i / N, i % N);
+        int xval = skel->getValue(i / N, i % N);
+        bnCells[i]->resetCell(val);
+        if (xval == 0)
+            bnCells[i]->setUnknown();
+    }
+    CurrentCell = -1;
+}
+
 void Sudoku::handleClear()
 {
     if (bnNotes->getToggleState() == false)
-        bnCells[CurrentCell]->reset();
+    {
+        bnCells[CurrentCell]->setCurrentValue(0);
+        bnCells[CurrentCell]->setButtonText("");
+        checkCompletedNumbers();
+    }
 }
 
 void Sudoku::handleQuit()
@@ -414,7 +525,7 @@ void Sudoku::hilightSquare(int square, bool state)
             bnCells[((topLeftR + r) * N) + topLeftC + c]->setColour(TextButton::buttonColourId, hue);
 }
 
-int  Sudoku::collToSquare(int cell)
+int  Sudoku::cellToSquare(int cell)
 {
     int row = cell / N;
     int col = cell % N;
@@ -494,6 +605,13 @@ void Sudoku::resized()
     cbChecking->setBounds(area.removeFromTop(size / 2));
     cbErrorHilight->setBounds(area.removeFromTop(size / 2));
     cbNotesTidy->setBounds(area.removeFromTop(size / 2));
+    auto buts = area.removeFromBottom(size);
+    buts.removeFromRight(4);
+    buts.removeFromTop(size / 5);
+    buts.removeFromBottom(size / 5);
+    auto bnew = buts.removeFromRight(size * 2);
+    bnew.setY(notes.getY());
+    bnNew->setBounds(bnew);
 }
 
 void Sudoku::createButtons()
@@ -539,8 +657,14 @@ void Sudoku::createButtons()
     bnNotes->setColour(TextButton::buttonOnColourId, Colours::red);
     bnNotes->setColour(TextButton::buttonColourId, Colours::green);
     bnNotes->setClickingTogglesState(true);
-
     bnNotes->addListener(this);
+    //
+    bnNew.reset(new TextButton("New"));
+    addAndMakeVisible(bnNew.get());
+    bnNew->setColour(TextButton::buttonOnColourId, Colours::red);
+    bnNew->setColour(TextButton::buttonColourId, Colours::green);
+    bnNew->addListener(this);
+
     //
     bnOne.reset(new TextButton("1"));
     addAndMakeVisible(bnOne.get());

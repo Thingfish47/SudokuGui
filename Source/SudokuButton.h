@@ -27,7 +27,8 @@ public:
     bool    isWrong();
     void    toggleNote (int x);
     void    clearNote (int x);
-    void    reset();
+    void    resetCell(int);
+    //int     reset();
     int     countNotes();
     void    setUnknown();
     bool    flaggingErrorsEnabled();
