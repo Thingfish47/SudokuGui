@@ -24,6 +24,7 @@ using namespace juce;
 #define     CHECKINGSTATE   "AllowChecking"
 #define     HILIGHTING      "AllowHilighting"
 #define     TIDYNOTES       "AllowNotesTidy"
+#define     RIGHTCLICK      "RightClickTogglesNotes"
 #define     LIGHTNESS       0.56f
 #define     WIDTH           960
 #define     HEIGHT          710
@@ -32,6 +33,7 @@ using namespace juce;
 /*
 */
 class Sudoku  : public juce::Component,
+                public Timer,
                 public Button::Listener
 
 {
@@ -44,10 +46,12 @@ public:     //  Functions
     bool hilightingEnabled() { return cbCellHilight->getToggleState(); }
     bool hilightingEnabledNote(int);
 private:    //  Functions
+    void timerCallback() override;
     void paint (juce::Graphics&) override;
     void resized() override;
     void buttonClicked(Button* buttonThatWasClicked) override;
     bool keyPressed(const juce::KeyPress& key) override;
+    void mouseUp(const MouseEvent&) override;
     void createButtons();
     void handleQuit();
     void handleClear();
@@ -90,6 +94,7 @@ private:    //  Data
     std::unique_ptr<ToggleButton>   cbCellHilight;
     std::unique_ptr<ToggleButton>   cbChecking;
     std::unique_ptr<ToggleButton>   cbNotesTidy;
+    std::unique_ptr<ToggleButton>   cbNotesToggle;
     std::unique_ptr<TextButton>     bnCheck;
     std::unique_ptr<TextButton>     bnQuit;
     std::unique_ptr<TextButton>     bnNotes;

@@ -16,7 +16,9 @@ Sudoku::Sudoku()
 {
     //srand(time(0));
     setWantsKeyboardFocus(true);
-    NumberToRemove = 45;
+    NumberToRemove = 4;
+    CurrentCell = -1;
+    //
     for (int i = 0; i < N * N; i++)
     {
         bnCells[i].reset(new SudokuButton(this, 0));
@@ -29,39 +31,13 @@ Sudoku::Sudoku()
         bnCells[i]->setColour(TextButton::textColourOnId, Colours::black);
         bnCells[i]->setColour(TextButton::textColourOffId, Colours::black);
     }
-    handleNew();
-    //grid.reset (new SudokuGrid());
-    //NumberToRemove = 45;
-    //    hold.reset(new SudokuGrid(grid.get()));
-    //    hold->removeDigits(NumberToRemove);
-    //    skel.reset(new SudokuGrid(hold.get()));
-    //} while (!hold->resolveSudoku());
-    //for (int i = 0; i < N * N; i++)
-    //{
-    //    int val = grid->getValue(i / N, i % N);
-    //    int xval = skel->getValue(i / N, i % N);
-    //    bnCells[i].reset(new SudokuButton(this, val));
-    //    //bnCells[i]->setCurrentValue(val);
-    //    if (xval == 0)
-    //        bnCells[i]->setUnknown();
-    //    addAndMakeVisible(bnCells[i].get());
-    //    bnCells[i]->setLookAndFeel((LookAndFeel *) &sbLnF);
-    //    bnCells[i]->setColour(TextButton::buttonOnColourId, Colours::darkgrey);
-    //    bnCells[i]->setColour(TextButton::buttonColourId, Colours::grey);
-    //    bnCells[i]->setColour(TextButton::textColourOnId, Colours::black);
-    //    bnCells[i]->setColour(TextButton::textColourOffId, Colours::black);
-    //    bnCells[i]->addListener(this);
-    //}
-    CurrentCell = -1;
-    //removeDigits(45);       //  45 seems insoluable.
-    createButtons();
-    //
     lbStatus.reset(new Label("lbStatus"));
     lbStatus->setFont(Font(HEIGHT / (N + N)));
     lbStatus->setColour(Label::textColourId, Colours::black);
     lbStatus->setJustificationType(Justification::centred);
     addAndMakeVisible(lbStatus.get());
 
+    createButtons();
     IniReg.reset(new IniFile(INIFILENAME));
     String iniString = IniReg->Read(CHECKINGSTATE, "1");
     cbChecking->setToggleState(iniString.compare("1") == 0, dontSendNotification);
@@ -72,6 +48,10 @@ Sudoku::Sudoku()
     cbErrorHilight->setToggleState(iniString.compare("1") == 0, dontSendNotification);
     iniString = IniReg->Read(TIDYNOTES, "1");
     cbNotesTidy->setToggleState(iniString.compare("1") == 0, dontSendNotification);
+    iniString = IniReg->Read(RIGHTCLICK, "1");
+    cbNotesToggle->setToggleState(iniString.compare("1") == 0, dontSendNotification);
+    addMouseListener(this, true);
+    handleNew();
     setSize(WIDTH, HEIGHT);
 }
 
@@ -81,6 +61,8 @@ Sudoku::~Sudoku()
     IniReg->SetReg(CHECKINGSTATE, cbChecking->getToggleState() ? "1" : "0");
     IniReg->SetReg(HILIGHTING, cbCellHilight->getToggleState() ? "1" : "0");
     IniReg->SetReg(SHOWERRORS, cbErrorHilight->getToggleState() ? "1" : "0");
+    IniReg->SetReg(RIGHTCLICK, cbNotesToggle->getToggleState() ? "1" : "0");
+    IniReg->SetReg(TIDYNOTES, cbNotesTidy->getToggleState() ? "1" : "0");
     IniReg.reset();
 }
 
@@ -153,18 +135,46 @@ void Sudoku::paint (juce::Graphics& g)
     g.drawRect(box2, 2);
 }
 
+void Sudoku::timerCallback()
+{
+    lbStatus->setText("", dontSendNotification);
+    stopTimer();
+}
+
+void Sudoku::mouseUp(const MouseEvent& event)
+{
+    if (event.mods.isRightButtonDown())
+    {
+        if (cbNotesToggle->getToggleState() == false)
+            return;
+        // Handle the right mouse button up event here
+        DBG("Mouse up");
+        if (bnNotes->getToggleState() == false)
+            bnNotes->setToggleState(true, dontSendNotification);
+        else
+            bnNotes->setToggleState(false, dontSendNotification);
+        bnClear->setVisible(bnNotes->getToggleState() ? false : true);
+    }
+}
+
 bool Sudoku::keyPressed(const juce::KeyPress& key)
 {
     if (CurrentCell < 0)
         return true;
     ModifierKeys mods = key.getModifiers();
     if (mods.isAnyModifierKeyDown() || mods.isAnyMouseButtonDown())
+    {
+        DBG("Modifiers down");
         return true;
-    if (!bnCells[CurrentCell]->isUnknown())
-        return false;
+    }
     juce_wchar ch = key.getTextCharacter();
     if (ch >= '1' && ch <= '9')
     {
+        //if (!bnCells[CurrentCell]->isUnknown())
+        //{
+        //    DBG("CurrentCell Not unknown");
+        //    return false;
+        //}
         int number = ch - '0';
         handleNumberEntry(number);
     }
@@ -176,6 +186,8 @@ void Sudoku::buttonClicked(Button* buttonThatWasClicked)
 
     if (buttonThatWasClicked == bnQuit.get())
         handleQuit();
+    else if (buttonThatWasClicked == bnNotes.get())
+        bnClear->setVisible(bnNotes->getToggleState() ? false : true);
     else if (buttonThatWasClicked == cbChecking.get())
         handleCheckboxes();
     else if (buttonThatWasClicked == cbCellHilight.get())
@@ -277,7 +289,7 @@ void Sudoku::handleCurrentCell(int newCurrent)
 {
     bool    prevToggleState = false;
 
-    lbStatus->setText("", dontSendNotification);
+    //lbStatus->setText("", dontSendNotification);
     if (CurrentCell >= 0)
     {
 	    hilightRow(CurrentRow, false);
@@ -307,7 +319,7 @@ void Sudoku::handleNumberEntry(int Number)
 {
     if (CurrentCell < 0)
         return;
-    lbStatus->setText("", dontSendNotification);
+    //lbStatus->setText("", dontSendNotification);
     if (bnNotes->getToggleState() == false)
     {
         bnCells[CurrentCell]->setCurrentValue(Number);
@@ -449,22 +461,35 @@ void Sudoku::handleCheck()
     else
         sprintf(msg, "%d cells are wrong", errCt);
     lbStatus->setText(msg, dontSendNotification);
+    startTimer(3000);
 }
 
 void Sudoku::handleNew()
 {
+    lbStatus->setText("", dontSendNotification);
     grid.reset (new SudokuGrid());
     hold.reset(new SudokuGrid(grid.get()));
     hold->removeDigits(NumberToRemove);
-    skel.reset(new SudokuGrid(hold.get()));
+    //skel.reset(new SudokuGrid(hold.get()));
     for (int i = 0; i < N * N; i++)
     {
         int val = grid->getValue(i / N, i % N);
-        int xval = skel->getValue(i / N, i % N);
+        int xval = hold->getValue(i / N, i % N);
         bnCells[i]->resetCell(val);
+        bnCells[i]->setEnabled(true);
         if (xval == 0)
             bnCells[i]->setUnknown();
     }
+    bnOne->setVisible(true);
+    bnTwo->setVisible(true);
+    bnThree->setVisible(true);
+    bnFour->setVisible(true);
+    bnFive->setVisible(true);
+    bnSix->setVisible(true);
+    bnSeven->setVisible(true);
+    bnEight->setVisible(true);
+    bnNine->setVisible(true);
+    bnClear->setVisible(bnNotes->getToggleState() ? false : true);
     CurrentCell = -1;
 }
 
@@ -605,6 +630,7 @@ void Sudoku::resized()
     cbChecking->setBounds(area.removeFromTop(size / 2));
     cbErrorHilight->setBounds(area.removeFromTop(size / 2));
     cbNotesTidy->setBounds(area.removeFromTop(size / 2));
+    cbNotesToggle->setBounds(area.removeFromTop(size / 2));
     auto buts = area.removeFromBottom(size);
     buts.removeFromRight(4);
     buts.removeFromTop(size / 5);
@@ -639,6 +665,12 @@ void Sudoku::createButtons()
     cbNotesTidy->addListener(this);
     cbNotesTidy->setColour(ToggleButton::textColourId, Colours::black);
     cbNotesTidy->setColour(ToggleButton::tickColourId, Colours::black);
+    //
+    cbNotesToggle.reset(new ToggleButton("right click toggles notes"));
+    addAndMakeVisible(cbNotesToggle.get());
+    cbNotesToggle->addListener(this);
+    cbNotesToggle->setColour(ToggleButton::textColourId, Colours::black);
+    cbNotesToggle->setColour(ToggleButton::tickColourId, Colours::black);
     //
     bnCheck.reset(new TextButton("Check"));
     addAndMakeVisible(bnCheck.get());
