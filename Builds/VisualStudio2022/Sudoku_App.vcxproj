@@ -141,6 +141,8 @@
     <Lib/>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\Triples.cpp"/>
+    <ClCompile Include="..\..\Source\Pairs.cpp"/>
     <ClCompile Include="..\..\Source\SudokuButtonLnF.cpp"/>
     <ClCompile Include="..\..\Source\SudokuButton.cpp"/>
     <ClCompile Include="..\..\Source\Grid.cpp"/>
@@ -1382,6 +1384,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Triples.h"/>
+    <ClInclude Include="..\..\Source\Pairs.h"/>
     <ClInclude Include="..\..\Source\SudokuButtonLnF.h"/>
     <ClInclude Include="..\..\Source\SudokuButton.h"/>
     <ClInclude Include="..\..\Source\Grid.h"/>

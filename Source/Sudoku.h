@@ -15,6 +15,8 @@
 #include "grid.h"
 #include "SudokuButton.h"
 #include "SudokuButtonLnF.h"
+#include "Pairs.h"
+#include "Triples.h"
 
 using namespace juce;
 

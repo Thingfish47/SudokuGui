@@ -220,6 +220,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\Triples.cpp">
+      <Filter>Sudoku\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Pairs.cpp">
+      <Filter>Sudoku\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\SudokuButtonLnF.cpp">
       <Filter>Sudoku\Source</Filter>
     </ClCompile>
@@ -1572,6 +1578,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Triples.h">
+      <Filter>Sudoku\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Pairs.h">
+      <Filter>Sudoku\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\SudokuButtonLnF.h">
       <Filter>Sudoku\Source</Filter>
     </ClInclude>

@@ -15,6 +15,7 @@
 using namespace juce;
 
 class Sudoku;
+class Pair;
 
 class SudokuButton : public TextButton
 {
@@ -30,6 +31,7 @@ public:
     void    clearNote (int x);
     void    resetCell(int);
     int     countNotes();
+    Pair    getPair();
     void    setUnknown();
     void    clearAllNotes();
     bool    flaggingErrorsEnabled();
@@ -38,6 +40,7 @@ public:
     int     getActualValue()    { return ActualValue;   }
     int     getCurrentValue()   { return CurrentValue;  }
     bool    isUnknown()         { return Unknown;       }
+    bool    hasPair()           { return countNotes() == 2; }
 private:
     Sudoku* pParent;
     bool    Unknown;

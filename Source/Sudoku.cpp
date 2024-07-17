@@ -556,9 +556,20 @@ void Sudoku::handleAllPossible()
 
 void Sudoku::handleFindPairs()
 {
-    DBG("find pairs");
-    //for (int cell=0 ; cell < N*N; cell++)
-    //    findAllPossible(cell);
+    DBG("handleFindPairs");
+    bool andAgain = false;
+    Pair    matchPair;
+	do
+	{
+        andAgain = false;
+        for (int cell = 0; cell < N * N; cell++)
+        {
+            if (bnCells[cell]->isUnknown())
+                continue;
+            if (bnCells[cell]->countNotes() == 2)
+                matchPair = bnCells[cell]->getPair();
+		}
+	} while (andAgain);
     cbShowPairs->setToggleState(false, dontSendNotification);
     repaint();
 }

@@ -81,12 +81,27 @@ void SudokuButton::setUnknown()
     setButtonText("");
 }
 
-//void SudokuButton::reset()
-//{
-//    CurrentValue = 0;
-//    setButtonText("");
-//}
-//
+Pair SudokuButton::getPair()
+{
+    Pair ret;
+
+    int a, b = 0;
+    for (int i = 0; i < N; i++)
+    {
+        if (Notes[i])
+        {
+            if (a == 0)
+                a = i + 1;
+            else
+            {
+                b = i + 1;
+                break;
+            }
+        }
+    }
+    return Pair(a, b);
+}
+
 int SudokuButton::countNotes()
 {
     int count = 0;
