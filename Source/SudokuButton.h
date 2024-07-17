@@ -24,13 +24,14 @@ public:
 
     void    setCurrentValue (int x);
     bool    getNote(int number);
+    bool    checkCorrect();
     bool    isWrong();
     void    toggleNote (int x);
     void    clearNote (int x);
     void    resetCell(int);
-    //int     reset();
     int     countNotes();
     void    setUnknown();
+    void    clearAllNotes();
     bool    flaggingErrorsEnabled();
     bool    hilightingEnabled();
     bool    hilightingEnabledNote(int);

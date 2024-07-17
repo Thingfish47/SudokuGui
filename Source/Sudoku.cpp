@@ -16,7 +16,7 @@ Sudoku::Sudoku()
 {
     //srand(time(0));
     setWantsKeyboardFocus(true);
-    NumberToRemove = 4;
+    NumberToRemove = 45;
     CurrentCell = -1;
     //
     for (int i = 0; i < N * N; i++)
@@ -188,6 +188,10 @@ void Sudoku::buttonClicked(Button* buttonThatWasClicked)
         handleQuit();
     else if (buttonThatWasClicked == bnNotes.get())
         bnClear->setVisible(bnNotes->getToggleState() ? false : true);
+    else if (buttonThatWasClicked == cbShowPossibles.get())
+        handleAllPossible();
+    else if (buttonThatWasClicked == cbShowPairs.get())
+        handleFindPairs();
     else if (buttonThatWasClicked == cbChecking.get())
         handleCheckboxes();
     else if (buttonThatWasClicked == cbCellHilight.get())
@@ -200,6 +204,8 @@ void Sudoku::buttonClicked(Button* buttonThatWasClicked)
         handleCheck();
     else if (buttonThatWasClicked == bnNew.get())
         handleNew();
+    else if (buttonThatWasClicked == bnReset.get())
+        handleReset();
     else if (buttonThatWasClicked == bnOne.get())
         handleNumberEntry(1);
     else if (buttonThatWasClicked == bnTwo.get())
@@ -227,6 +233,36 @@ void Sudoku::buttonClicked(Button* buttonThatWasClicked)
                 return;
             }
     }
+}
+
+void Sudoku::findAllPossible (int cell)
+{
+    for (int i = 0; i < N; i++)
+        bnCells[cell]->clearNote(i+1);
+    if (!bnCells[cell]->isUnknown())
+        return;
+    if (bnCells[cell]->getCurrentValue())
+        return;
+    for (int i = 0; i < N; i++)
+    {
+        if (isPossible(cell, i+1))
+            bnCells[cell]->toggleNote(i+1);
+    }
+}
+
+bool Sudoku::isPossible (int cell, int number)
+{
+    int row = cell / N;
+    int col = cell % N;
+    int square = cellToSquare(cell);
+
+    if (isInSquare(square, number))
+        return false;
+    if (isInRow(row, number))
+        return false;
+    if (isInCol(col, number))
+        return false;
+    return true;
 }
 
 bool Sudoku::isInSquare(int square, int number)
@@ -319,7 +355,6 @@ void Sudoku::handleNumberEntry(int Number)
 {
     if (CurrentCell < 0)
         return;
-    //lbStatus->setText("", dontSendNotification);
     if (bnNotes->getToggleState() == false)
     {
         bnCells[CurrentCell]->setCurrentValue(Number);
@@ -364,7 +399,8 @@ bool Sudoku::solved()
 {
     for (int i = 0; i < N * N; i++)
     {
-        if (bnCells[i]->isUnknown() || bnCells[i]->isWrong())
+        bool check = bnCells[i]->checkCorrect();
+        if (!check)
             return false;
     }
     return true;
@@ -444,6 +480,22 @@ void Sudoku::handleCheckboxes()
     bnCheck->setVisible(cbChecking->getToggleState());
 }
 
+void Sudoku::handleReset()
+{
+    lbStatus->setText("", dontSendNotification);
+    for (int i = 0; i < N * N; i++)
+    {
+        bnCells[i]->setEnabled(true);
+        if (bnCells[i]->isUnknown())
+        {
+            bnCells[i]->setCurrentValue(0);
+            bnCells[i]->clearAllNotes();
+        }
+    }
+    checkCompletedNumbers();
+    repaint();
+}
+
 void Sudoku::handleCheck()
 {
     char    msg[32];
@@ -451,7 +503,7 @@ void Sudoku::handleCheck()
 
     for (int i = 0; i < N * N; i++)
     {
-        if (bnCells[i]->isEnabled() && bnCells[i]->isWrong())
+        if (bnCells[i]->isUnknown() && bnCells[i]->isWrong())
             errCt++;
     }
     if (errCt == 0)
@@ -491,6 +543,24 @@ void Sudoku::handleNew()
     bnNine->setVisible(true);
     bnClear->setVisible(bnNotes->getToggleState() ? false : true);
     CurrentCell = -1;
+}
+
+void Sudoku::handleAllPossible()
+{
+    DBG("all possible");
+    for (int cell=0 ; cell < N*N; cell++)
+        findAllPossible(cell);
+    cbShowPossibles->setToggleState(false, dontSendNotification);
+    repaint();
+}
+
+void Sudoku::handleFindPairs()
+{
+    DBG("find pairs");
+    //for (int cell=0 ; cell < N*N; cell++)
+    //    findAllPossible(cell);
+    cbShowPairs->setToggleState(false, dontSendNotification);
+    repaint();
 }
 
 void Sudoku::handleClear()
@@ -609,20 +679,28 @@ void Sudoku::resized()
             bnClear->setBounds(row.removeFromLeft(size).reduced(4));
         }
     }
-    auto quit = area.removeFromLeft(size * 2).reduced(4);
-    quit.removeFromTop(size / 5);
-    quit.removeFromBottom(size / 5);
+    auto buts = bounds;
+    buts = buts.removeFromBottom(size);
+    buts.removeFromTop(size / 5);
+    buts.removeFromBottom(size / 5);
+    buts.removeFromLeft(size);
+    auto quit = buts.removeFromLeft(size * 2).reduced(4);
     bnQuit->setBounds(quit);
-    auto check = area.removeFromLeft(size * 5);
-    check.removeFromLeft(size + size / 2);
-    check.removeFromRight(size + size / 2);
-    check.removeFromTop(size / 5);
-    check.removeFromBottom(size / 5);
+    buts.removeFromLeft(size);
+    buts.removeFromLeft(size / 2);
+    auto check = buts.removeFromLeft(size * 2);
     bnCheck->setBounds(check.reduced(4));
-    auto notes = area.removeFromLeft(size * 2).reduced(4);
-    notes.removeFromTop(size / 5);
-    notes.removeFromBottom(size / 5);
-    bnNotes->setBounds(notes);
+    buts.removeFromLeft(size);
+    buts.removeFromLeft(size / 2);
+    auto notes = buts.removeFromLeft(size * 2);
+    bnNotes->setBounds(notes.reduced(4));
+    buts.removeFromLeft(size / 2);
+    auto brst = buts.removeFromLeft(size * 3 / 2);
+    bnReset->setBounds(brst.reduced(4));
+    buts.removeFromLeft(size / 2);
+    auto bnew = buts.removeFromLeft(size * 3 / 2);
+    bnNew->setBounds(bnew.reduced(4));
+
     area = bounds;
     area.removeFromTop(size * 5);
     area.removeFromLeft(size * 11);
@@ -631,13 +709,8 @@ void Sudoku::resized()
     cbErrorHilight->setBounds(area.removeFromTop(size / 2));
     cbNotesTidy->setBounds(area.removeFromTop(size / 2));
     cbNotesToggle->setBounds(area.removeFromTop(size / 2));
-    auto buts = area.removeFromBottom(size);
-    buts.removeFromRight(4);
-    buts.removeFromTop(size / 5);
-    buts.removeFromBottom(size / 5);
-    auto bnew = buts.removeFromRight(size * 2);
-    bnew.setY(notes.getY());
-    bnNew->setBounds(bnew);
+    cbShowPossibles->setBounds(area.removeFromTop(size / 2));
+    cbShowPairs->setBounds(area.removeFromTop(size / 2));
 }
 
 void Sudoku::createButtons()
@@ -672,6 +745,18 @@ void Sudoku::createButtons()
     cbNotesToggle->setColour(ToggleButton::textColourId, Colours::black);
     cbNotesToggle->setColour(ToggleButton::tickColourId, Colours::black);
     //
+    cbShowPossibles.reset(new ToggleButton("find possibles"));
+    addAndMakeVisible(cbShowPossibles.get());
+    cbShowPossibles->addListener(this);
+    cbShowPossibles->setColour(ToggleButton::textColourId, Colours::black);
+    cbShowPossibles->setColour(ToggleButton::tickColourId, Colours::black);
+    //
+    cbShowPairs.reset(new ToggleButton("find pairs"));
+    addAndMakeVisible(cbShowPairs.get());
+    cbShowPairs->addListener(this);
+    cbShowPairs->setColour(ToggleButton::textColourId, Colours::black);
+    cbShowPairs->setColour(ToggleButton::tickColourId, Colours::black);
+    //
     bnCheck.reset(new TextButton("Check"));
     addAndMakeVisible(bnCheck.get());
     bnCheck->setColour(TextButton::buttonOnColourId, Colours::red);
@@ -696,6 +781,12 @@ void Sudoku::createButtons()
     bnNew->setColour(TextButton::buttonOnColourId, Colours::red);
     bnNew->setColour(TextButton::buttonColourId, Colours::green);
     bnNew->addListener(this);
+    //
+    bnReset.reset(new TextButton("Reset"));
+    addAndMakeVisible(bnReset.get());
+    bnReset->setColour(TextButton::buttonOnColourId, Colours::red);
+    bnReset->setColour(TextButton::buttonColourId, Colours::green);
+    bnReset->addListener(this);
 
     //
     bnOne.reset(new TextButton("1"));

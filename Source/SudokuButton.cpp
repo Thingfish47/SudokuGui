@@ -38,7 +38,7 @@ void SudokuButton::resetCell(int Value)
 void SudokuButton::setCurrentValue(int Value)
 {
     CurrentValue = Value;
-    Unknown = false;
+    //Unknown = false;55
     if (Value == 0)
         setButtonText("");
     else
@@ -50,6 +50,13 @@ bool SudokuButton::isWrong()
     if (CurrentValue == 0)
         return false;
     return ActualValue != CurrentValue;
+}
+
+bool SudokuButton::checkCorrect()
+{
+    if (Unknown == false)
+        return true;
+    return ActualValue == CurrentValue;
 }
 
 bool SudokuButton::flaggingErrorsEnabled()
@@ -100,10 +107,15 @@ void SudokuButton::toggleNote(int number)
     Notes[number - 1] = Notes[number - 1] ? false : true;
 }
 
-
 void SudokuButton::clearNote(int number)
 {
     Notes[number - 1] = false;
+}
+
+void SudokuButton::clearAllNotes()
+{
+    for (int i = 0; i < N; i++)
+        Notes[i] = false;
 }
 
 

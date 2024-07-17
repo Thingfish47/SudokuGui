@@ -56,7 +56,10 @@ private:    //  Functions
     void handleQuit();
     void handleClear();
     void handleNew();
+    void handleReset();
     void handleCheck();
+    void handleAllPossible();
+    void handleFindPairs();
     void checkCompletedNumbers();
     int  countCompletedNumbers(int number);
     void handleCheckboxes();
@@ -69,6 +72,8 @@ private:    //  Functions
     void hilightSquare (int, bool);
     void hilightNumbers (int, bool);
     int  cellToSquare(int);
+    void findAllPossible(int cell);
+    bool isPossible(int cell, int number);
     bool isInSquare(int square, int number);
     bool isInRow(int row, int number);
     bool isInCol(int col, int number);
@@ -95,10 +100,15 @@ private:    //  Data
     std::unique_ptr<ToggleButton>   cbChecking;
     std::unique_ptr<ToggleButton>   cbNotesTidy;
     std::unique_ptr<ToggleButton>   cbNotesToggle;
+    std::unique_ptr<ToggleButton>   cbShowPairs;
+    std::unique_ptr<ToggleButton>   cbShowPossibles;
+    //
     std::unique_ptr<TextButton>     bnCheck;
     std::unique_ptr<TextButton>     bnQuit;
     std::unique_ptr<TextButton>     bnNotes;
     std::unique_ptr<TextButton>     bnNew;
+    std::unique_ptr<TextButton>     bnReset;
+    //
     std::unique_ptr<TextButton>     bnOne;
     std::unique_ptr<TextButton>     bnTwo;
     std::unique_ptr<TextButton>     bnThree;
