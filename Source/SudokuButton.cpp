@@ -85,7 +85,8 @@ Pair SudokuButton::getPair()
 {
     Pair ret;
 
-    int a, b = 0;
+    int a = 0;
+    int b = 0;
     for (int i = 0; i < N; i++)
     {
         if (Notes[i])

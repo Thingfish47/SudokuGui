@@ -81,6 +81,14 @@ private:    //  Functions
     bool isInCol(int col, int number);
     void setSolved();
     bool solved();
+    int  enterSolos();
+    void onlyInRow(int);
+    void onlyInCol(int);
+    void onlyInSquare(int);
+    void checkPairsRow(int);
+    void checkPairsCol(int);
+    void checkPairsSquare(int);
+
 public:     //  Data
 private:    //  Data
     int     NumberToRemove;
@@ -92,6 +100,7 @@ private:    //  Data
     int     Width;
     SudokuButtonLnF                 sbLnF;
     NumberButtonLnF                 nbLnF;
+    std::unique_ptr<Pair>           matchedPairs[N*N];
     std::unique_ptr<SudokuGrid>     grid;
     std::unique_ptr<SudokuGrid>     hold;
     std::unique_ptr<SudokuGrid>     skel;

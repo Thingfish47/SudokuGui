@@ -13,6 +13,8 @@
 
 Pair::Pair (int a, int b)
 {
+    first = 0;
+    second = 0;
     if (a < b)
     {
         first = a;
