@@ -13,15 +13,19 @@
 #include <JuceHeader.h>
 #include "IniFile.h"
 #include "grid.h"
-#include "SudokuButton.h"
+#include "Cell.h"
 #include "SudokuButtonLnF.h"
 #include "Pairs.h"
 #include "Triples.h"
 
 using namespace juce;
 
+#define     PAIRSDEBUG
+
+
 #define     VERSION_LIT     "Ver 3.3.1"
 #define     INIFILENAME     "\\Sudoku\\.ini"
+#define     SAVEFILENAME    "\\Sudoku\\.save"
 #define     SHOWERRORS      "ShowErrors"
 #define     CHECKINGSTATE   "AllowChecking"
 #define     HILIGHTING      "AllowHilighting"
@@ -30,6 +34,8 @@ using namespace juce;
 #define     LIGHTNESS       0.56f
 #define     WIDTH           960
 #define     HEIGHT          710
+
+const int SqIdx[] = { 0, 3, 6, 27, 30, 33, 54, 57, 60 };
 
 //==============================================================================
 /*
@@ -58,6 +64,8 @@ private:    //  Functions
     void handleQuit();
     void handleClear();
     void handleNew();
+    void handleLoad();
+    void handleSave();
     void handleReset();
     void handleCheck();
     void handleAllPossible();
@@ -82,13 +90,19 @@ private:    //  Functions
     void setSolved();
     bool solved();
     int  enterSolos();
+    void printGrid();
     void onlyInRow(int);
     void onlyInCol(int);
     void onlyInSquare(int);
-    void checkPairsRow(int);
-    void checkPairsCol(int);
-    void checkPairsSquare(int);
-
+    bool checkPairsRow(int);
+    bool checkPairsCol(int);
+    bool checkPairsSquare(int);
+    Cell* getCellxCol(int x, int Col);
+    Cell* getCellxRow(int x, int Row);
+    Cell* getCellxSqr(int x, int Sqr);
+    int  getIdxxCol(int x, int Col);
+    int  getIdxxRow(int x, int Row);
+    int  getIdxxSqr(int x, int Sqr);
 public:     //  Data
 private:    //  Data
     int     NumberToRemove;
@@ -105,6 +119,7 @@ private:    //  Data
     std::unique_ptr<SudokuGrid>     hold;
     std::unique_ptr<SudokuGrid>     skel;
     std::unique_ptr<IniFile>        IniReg;
+    std::unique_ptr<IniFile>        SaveReg;
     std::unique_ptr<Label>          lbStatus;
     std::unique_ptr<ToggleButton>   cbErrorHilight;
     std::unique_ptr<ToggleButton>   cbCellHilight;
@@ -119,6 +134,9 @@ private:    //  Data
     std::unique_ptr<TextButton>     bnNotes;
     std::unique_ptr<TextButton>     bnNew;
     std::unique_ptr<TextButton>     bnReset;
+    std::unique_ptr<TextButton>     bnEnter;
+    std::unique_ptr<TextButton>     bnLoad;
+    std::unique_ptr<TextButton>     bnSave;
     //
     std::unique_ptr<TextButton>     bnOne;
     std::unique_ptr<TextButton>     bnTwo;
@@ -130,7 +148,7 @@ private:    //  Data
     std::unique_ptr<TextButton>     bnEight;
     std::unique_ptr<TextButton>     bnNine;
     std::unique_ptr<TextButton>     bnClear;
-    std::unique_ptr<SudokuButton>   bnCells[N * N];
+    std::unique_ptr<Cell>           bnCells[N * N];
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Sudoku)
 };

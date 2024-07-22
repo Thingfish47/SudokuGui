@@ -9,7 +9,7 @@
 */
 
 #include "Sudoku.h"
-#include "SudokuButton.h"
+#include "Cell.h"
 #include "SudokuButtonLnF.h"
 
 
@@ -32,7 +32,7 @@ void SudokuButtonLnF::drawButtonBackground(Graphics& g, Button& button, const Co
 
 void SudokuButtonLnF::drawButtonText(Graphics& g, TextButton& button, bool, bool)
 {
-    SudokuButton* sb = (SudokuButton*) &button;
+    Cell* sb = (Cell*) &button;
 
     if (sb->getCurrentValue() == 0 && N == 9)     //  Draw notes for regular 9x9 game.
     {
@@ -78,7 +78,7 @@ void NumberButtonLnF::drawButtonBackground(Graphics& g, Button& button, const Co
 
 void NumberButtonLnF::drawButtonText(Graphics& g, TextButton& button, bool, bool)
 {
-    SudokuButton* sb = (SudokuButton*) &button;
+    Cell* sb = (Cell*) &button;
 
     Font font((float) button.getHeight() * 0.7f);
     g.setFont(font);

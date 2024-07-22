@@ -96,7 +96,7 @@ void IniFile::ReadAll()
         field = str.substring(Idx + 3);
         R->Value = field.trim().toStdString();
         vItems->push_back(*R);
-        DBG(str);
+        //DBG(str);
     }
     OutOfDate = false;
 
