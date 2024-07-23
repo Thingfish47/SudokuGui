@@ -82,6 +82,8 @@ private:    //  Functions
     void hilightSquare (int, bool);
     void hilightNumbers (int, bool);
     int  cellToSquare(int);
+    int  cellToRow(int x) { return x / N; }
+    int  cellToCol(int x) { return x % N; }
     void findAllPossible(int cell);
     bool isPossible(int cell, int number);
     bool isInSquare(int square, int number);
@@ -97,6 +99,9 @@ private:    //  Functions
     bool checkPairsRow(int);
     bool checkPairsCol(int);
     bool checkPairsSquare(int);
+    bool checkHiddenPairsRow(int);
+    bool checkHiddenPairsCol(int);
+    bool checkHiddenPairsSquare(int);
     Cell* getCellxCol(int x, int Col);
     Cell* getCellxRow(int x, int Row);
     Cell* getCellxSqr(int x, int Sqr);

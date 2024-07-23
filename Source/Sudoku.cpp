@@ -613,40 +613,63 @@ void Sudoku::printGrid()
 
 void Sudoku::handleFindPairs()
 {
+    static int first = true;
     cbShowPairs->setToggleState(false, dontSendNotification);
-    DBG("handleFindPairs");
-
-    for (int cell = 0; cell < N * N; cell++)
-        matchedPairs[cell].reset();
- 
-    printGrid();
-    for (int cell = 0; cell < N * N; cell++)
+    DBG("handleFindPairs " << first);
+    if (first)
     {
-        if (!bnCells[cell]->isUnknown())
-            continue;
-        if (bnCells[cell]->countNotes() == 2)
+        for (int cell = 0; cell < N * N; cell++)
+            matchedPairs[cell].reset();
+
+        printGrid();
+        for (int cell = 0; cell < N * N; cell++)
         {
-            matchedPairs[cell].reset (new Pair (bnCells[cell]->getPair()));
+            if (bnCells[cell]->isKnown())
+                continue;
+            if (bnCells[cell]->countNotes() == 2)
+            {
+                matchedPairs[cell].reset(new Pair(bnCells[cell]->getPair()));
 #ifdef PAIRSDEBUG
-            DBG("cell " << cell << " has pair " << matchedPairs[cell]->get1st() << " ," << matchedPairs[cell]->get2nd());
+                DBG("cell " << cell << " has pair " << matchedPairs[cell]->get1st() << " ," << matchedPairs[cell]->get2nd());
 #endif // PAIRSDEBUG
+            }
         }
-	}
-    for (int row=0 ; row<N ; row++)
-        if (checkPairsRow(row))
-        {
-            int brkpt1 = 0;
-        }
-    for (int col=0 ; col<N ; col++)
-        if (checkPairsCol(col))
-        {
-            int brkpt1 = 0;
-        }
-    for (int sqr=0 ; sqr <N ; sqr++)
-        if (checkPairsSquare(sqr))
-        {
-            int brkpt1 = 0;
-        }
+        for (int row = 0; row < N; row++)
+            if (checkPairsRow(row))
+            {
+                repaint();
+            }
+        for (int col = 0; col < N; col++)
+            if (checkPairsCol(col))
+            {
+                repaint();
+            }
+        for (int sqr = 0; sqr < N; sqr++)
+            if (checkPairsSquare(sqr))
+            {
+                repaint();
+            }
+        first = false;
+    }
+    else
+    {
+        //for (int row = 0; row < N; row++)
+        //    if (checkHiddenPairsRow(row))
+        //    {
+        //        repaint();
+        //    }
+        //for (int col = 0; col < N; col++)
+        //    if (checkHiddenPairsCol(col))
+        //    {
+        //        repaint();
+        //    }
+        for (int sqr = 0; sqr < N; sqr++)
+            if (checkHiddenPairsSquare(sqr))
+            {
+                repaint();
+            }
+        first = true;
+    }
 //    for (int Id = 0; Id < N; Id++)
 //    {
 //        onlyInRow(Id);
@@ -657,16 +680,186 @@ void Sudoku::handleFindPairs()
 //        checkPairsSquare(Id);
 //    }
 ////    repaint();
-    int     Brkpt = 0;
 //    int solveCt = enterSolos();
 //    while (solveCt)
 //        solveCt = enterSolos();
-//    repaint();
+    repaint();
+}
+
+bool Sudoku::checkHiddenPairsRow(int row)
+{
+    bool    Result = false;
+    int     Tots[N] = { 0 };
+    int     Cells[N] = { 0 };
+    int     p1 = 0;
+    int     p2 = 0;
+
+    for (int i = 0; i < N ; i++)
+    {
+        int Idx = getIdxxRow(i, row);
+        if (bnCells[Idx]->isKnown())
+            continue;
+        for (int number = 0; number < N; number++)
+        {
+            if (bnCells[Idx]->getNote(number + 1))
+                Tots[number]++;
+        }
+    }
+    int pairs = 0;
+    for (int i = 0; i < N; i++)
+    {
+        if (Tots[i] == 2)
+        {
+            if (pairs == 0)
+                p1 = i + 1;
+            if (pairs == 1)
+                p2 = i + 1;
+            pairs++;
+        }
+        if (pairs > 2)
+            break;
+    }
+    if (pairs == 2)
+    {
+        int matchCt = 0;
+        for (int i = 0; i < N; i++)
+        {
+            int Idx = getIdxxRow(i, row);
+            if (bnCells[Idx]->getNote(p1) && bnCells[Idx]->getNote(p2)) //  Both in same cell
+                Cells[matchCt++] = Idx;
+        }
+        if (matchCt == 2)
+        {
+            DBG("Found hidden pair " << p1 + 1 << "," << p2 + 1 << " in Row " << row + 1 << " Cells " << Cells[0] << ", " << Cells[1]);
+            Result = true;
+        }
+    }
+    return Result;
+}
+
+bool Sudoku::checkHiddenPairsCol(int col)
+{
+    bool    Result = false;
+    int     Tots[N] = { 0 };
+    int     Cells[N] = { 0 };
+    int     p1 = 0;
+    int     p2 = 0;
+
+    for (int i = 0; i < N ; i++)
+    {
+        int Idx = getIdxxCol(i, col);
+        for (int number = 0; number < N; number++)
+        {
+            if (bnCells[Idx]->isKnown())
+                continue;
+            if (bnCells[Idx]->getNote(number + 1))
+                Tots[number]++;
+        }
+    }
+    int pairs = 0;
+    for (int i = 0; i < N; i++)
+    {
+        if (Tots[i] == 2)
+        {
+            if (pairs == 0)
+                p1 = i + 1;
+            if (pairs == 1)
+                p2 = i + 1;
+            pairs++;
+        }
+        if (pairs > 2)
+            break;
+    }
+    if (pairs == 2)
+    {
+        int matchCt = 0;
+        for (int i = 0; i < N; i++)
+        {
+            int Idx = getIdxxCol(i, col);
+            if (bnCells[Idx]->getNote(p1) && bnCells[Idx]->getNote(p2)) //  Both in same cell
+                Cells[matchCt++] = Idx;
+        }
+        if (matchCt == 2)
+        {
+            DBG("Found hidden pair " << p1 + 1 << "," << p2 + 1 << " in Col " << col + 1 << " Cells " << Cells[0] << ", " << Cells[1]);
+            Result = true;
+        }
+    }
+    return Result;
+}
+
+bool Sudoku::checkHiddenPairsSquare(int square)
+{
+    bool    Result = false;
+    int     Tots[N] = { 0 };
+    int     p1 = 0;
+    int     p2 = 0;
+
+    DBG("checkHiddenPairsSquare " << square+1);
+    for (int i = 0; i < N ; i++)
+    {
+        int Idx = getIdxxSqr(i, square);
+        for (int number = 0; number < N; number++)
+        {
+            if (bnCells[Idx]->isKnown())
+                continue;
+            if (bnCells[Idx]->getNote(number + 1))
+                Tots[number]++;
+        }
+    }
+    int pairs = 0;
+    for (int i = 0; i < N-1; i++)
+    {
+        if (Tots[i] == 2)   //  First pair
+        {
+            p1 = i;
+            int Cell1 = -1;
+            int Cell2 = -1;
+//            DBG("First is " << p1 + 1);
+            for (int j = i+1; j < N; j++)
+            {
+                if (Tots[j] == 2)   //  Possible second of pair
+                {
+                    p2 = j;
+                    for (int k = 0; k < N; k++)
+                    {
+                        int Idx = getIdxxSqr(k, square);
+                        if (bnCells[Idx]->isKnown())
+                            continue;
+//                        DBG("Looking for " << p1 + 1 << "," << p2 + 1 << " in " << Idx);
+                        if (bnCells[Idx]->getNote(p1 + 1))
+                        {
+                            if (bnCells[Idx]->getNote(p2 + 1)) //  Both in same cell
+                            {
+                                if (Cell1 < 0)
+                                {
+                                    Cell1 = Idx;
+                                    //DBG("Found hidden pairA " << p1 + 1 << "," << p2 + 1 << " in Square " << square + 1 << ", Cell " << Idx);
+                                }
+                                else if (Cell1 >= 0)
+                                {
+                                    Cell2 = Idx;
+                                    DBG("Found hidden pairB " << p1 + 1 << "," << p2 + 1 << " in Square " << square + 1 << ", Cell " << Cell1 << " and " << Cell2);
+                                    Tots[i] = 0;
+                                    Tots[j] = 0;
+                                }
+                                Result = true;
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (pairs == 2)
+        {
+        }
+    }
+    return Result;
 }
 
 bool Sudoku::checkPairsRow(int row)
 {
-    const int Base = row * N;
     int IdxA = 0;
     int IdxB = 0;
     for (int i = 0; i < N-1; i++)
@@ -682,24 +875,25 @@ bool Sudoku::checkPairsRow(int row)
             if (*matchedPairs[IdxA] == *matchedPairs[IdxB])
             {
                 DBG("Matched Pair (" << matchedPairs[IdxA]->get1st() << "," << matchedPairs[IdxA]->get2nd() << ") in Row " << row + 1);
+                for (int k = 0; k < N; k++)
+                {
+                    int Idx = getIdxxRow(k, row);
+                    if (Idx == IdxA || Idx == IdxB)
+                        continue;
+                    if (bnCells[Idx]->isKnown())
+                        continue;
+                    if (bnCells[Idx]->getNote(matchedPairs[IdxA]->get1st()))
+                    {
+                        bnCells[Idx]->clearNote(matchedPairs[IdxA]->get1st());
+                        DBG("Row clear " << matchedPairs[IdxA]->get1st() << " in " << row+1 << "," << k+1);
+                    }
+                    if (bnCells[Idx]->getNote(matchedPairs[IdxA]->get2nd()))
+                    {
+                        bnCells[Idx]->clearNote(matchedPairs[IdxA]->get2nd());
+                        DBG("Row clear " << matchedPairs[IdxA]->get2nd() << " in " << row+1 << "," << k+1);
+                    }
+                }
                 return true;
-                //for (int Idx = 0; Idx < N; Idx++)
-                //{
-                //    if (!bnCells[Base + Idx]->isUnknown() || bnCells[Base + Idx]->getCurrentValue() != 0)
-                //        continue;
-                //    if (Base + Idx == IdxA || Base + Idx == IdxB)
-                //        continue;
-                //    if (bnCells[Base + Idx]->getNote(matchedPairs[IdxA]->get1st()))
-                //    {
-                //        bnCells[Base + Idx]->clearNote(matchedPairs[IdxA]->get1st());
-                //        DBG("Row clear " << matchedPairs[IdxA]->get1st() << " in " << row+1 << "," << Idx+1);
-                //    }
-                //    if (bnCells[Base + Idx]->getNote(matchedPairs[IdxA]->get2nd()))
-                //    {
-                //        bnCells[Base + Idx]->clearNote(matchedPairs[IdxA]->get2nd());
-                //        DBG("Row clear " << matchedPairs[IdxA]->get2nd() << " in " << row+1 << "," << Idx+1);
-                //    }
-                //}
             }
         }
     }
@@ -723,24 +917,25 @@ bool Sudoku::checkPairsCol(int col)
             if (*matchedPairs[IdxA] == *matchedPairs[IdxB])
             {
                 DBG("Matched Pair (" << matchedPairs[IdxA]->get1st() << "," << matchedPairs[IdxA]->get2nd() << ") in Col " << col + 1);
+                for (int k = 0; k < N; k++)
+                {
+                    int Idx = getIdxxCol(k, col);
+                    if (Idx == IdxA || Idx == IdxB)
+                        continue;
+                    if (bnCells[Idx]->isKnown())
+                        continue;
+                    if (bnCells[Idx]->getNote(matchedPairs[IdxA]->get1st()))
+                    {
+                        bnCells[Idx]->clearNote(matchedPairs[IdxA]->get1st());
+                        DBG("Col clear " << matchedPairs[IdxA]->get1st() << " in " << k+1 << "," << col+1);
+                    }
+                    if (bnCells[Idx]->getNote(matchedPairs[IdxA]->get2nd()))
+                    {
+                        bnCells[Idx]->clearNote(matchedPairs[IdxA]->get2nd());
+                        DBG("Col clear " << matchedPairs[IdxA]->get2nd() << " in " << k+1 << "," << col+1);
+                    }
+                }
                 return true;
-                //for (int Idx = 0; Idx < N; Idx++)
-                //{
-                //    if (!bnCells[Base + (Idx * N)]->isUnknown() || bnCells[Base + (Idx * N)]->getCurrentValue() != 0)
-                //        continue;
-                //    if (Base + (Idx * N) == IdxA || Base + (Idx * N) == IdxB)
-                //        continue;
-                //    if (bnCells[Base + (Idx * N)]->getNote(matchedPairs[IdxA]->get1st()))
-                //    {
-                //        bnCells[Base + (Idx * N)]->clearNote(matchedPairs[IdxA]->get1st());
-                //        DBG("Col clear " << matchedPairs[IdxA]->get1st() << " in " << Idx+1 << "," << col+1);
-                //    }
-                //    if (bnCells[Base + Idx]->getNote(matchedPairs[IdxA]->get2nd()))
-                //    {
-                //        bnCells[Base + Idx]->clearNote(matchedPairs[IdxA]->get2nd());
-                //        DBG("Col clear " << matchedPairs[IdxA]->get2nd() << " in " << Idx+1 << "," << col+1);
-                //    }
-                //}
             }
         }
     }
@@ -764,6 +959,24 @@ bool Sudoku::checkPairsSquare(int square)
             if (*matchedPairs[IdxA] == *matchedPairs[IdxB])
             {
                 DBG("Matched Pair (" << matchedPairs[IdxA]->get1st() << "," << matchedPairs[IdxA]->get2nd() << ") in Square " << square + 1);
+                for (int k = 0; k < N; k++)
+                {
+                    int Idx = getIdxxSqr(k, square);
+                    if (Idx == IdxA || Idx == IdxB)
+                        continue;
+                    if (bnCells[Idx]->isKnown())
+                        continue;
+                    if (bnCells[Idx]->getNote(matchedPairs[IdxA]->get1st()))
+                    {
+                        bnCells[Idx]->clearNote(matchedPairs[IdxA]->get1st());
+                        DBG("Sqr clear " << matchedPairs[IdxA]->get1st() << " in " << cellToRow(Idx) + 1 << "," << cellToCol(Idx) + 1);
+                    }
+                    if (bnCells[Idx]->getNote(matchedPairs[IdxA]->get2nd()))
+                    {
+                        bnCells[Idx]->clearNote(matchedPairs[IdxA]->get2nd());
+                        DBG("Sqr clear " << matchedPairs[IdxA]->get2nd() << " in " << cellToRow(Idx) + 1 << "," << cellToCol(Idx) + 1);
+                    }
+                }
                 return true;
 
             }
@@ -774,105 +987,109 @@ bool Sudoku::checkPairsSquare(int square)
 
 void Sudoku::onlyInRow(int row)
 {
-    int     RowBase = row * N;
-    int     Idx = 0;
+    DBG("onlyInRow " << row << " needs Rework");
+    //int     RowBase = row * N;
+    //int     Idx = 0;
 
-    for (int i = 0; i < N; i++)
-    {
-        int ct = 0;
-        for (int cell = 0; cell < N; cell++)
-        {
-            if (!bnCells[RowBase + cell]->isUnknown())
-                continue;
-            if (bnCells[RowBase + cell]->getCurrentValue() != 0)
-                continue;
-            bool hit = bnCells[RowBase + cell]->getNote(i + 1);
-            if (hit)
-            {
-                Idx = RowBase + cell;
-                ct++;
-            }
-        }
-        if (ct == 1)
-        {
-            CurrentCell = Idx;
-            CurrentRow = CurrentCell / N;
-            CurrentCol = CurrentCell % N;
-            handleNumberEntry(i+1);
+    //for (int i = 0; i < N; i++)
+    //{
+    //    int ct = 0;
+    //    for (int cell = 0; cell < N; cell++)
+    //    {
+    //        if (bnCells[RowBase + cell]->isKnown())
+    //            continue;
+    //        if (bnCells[RowBase + cell]->getCurrentValue() != 0)
+    //            continue;
+    //        bool hit = bnCells[RowBase + cell]->getNote(i + 1);
+    //        if (hit)
+    //        {
+    //            Idx = RowBase + cell;
+    //            ct++;
+    //        }
+    //    }
+    //    if (ct == 1)
+    //    {
+    //        CurrentCell = Idx;
+    //        CurrentRow = CurrentCell / N;
+    //        CurrentCol = CurrentCell % N;
+    //        handleNumberEntry(i+1);
 
-            DBG("OnlyInRow " << i + 1 << " in " << (Idx / N) + 1 << "," << (Idx % N) + 1);
-        }
-    }
+    //        DBG("OnlyInRow " << i + 1 << " in " << (Idx / N) + 1 << "," << (Idx % N) + 1);
+    //    }
+    //}
 }
 void Sudoku::onlyInCol(int col)
 {
-    const int     Col = col;
-    int     Idx = 0;
+    DBG("onlyInCol " << col << " needs Rework");
+    //const int     Col = col;
+    //int     Idx = 0;
 
-    for (int i = 0; i < N; i++)
-    {
-        int ct = 0;
-        for (int cell = 0; cell < N; cell++)
-        {
-            if (!bnCells[Col + (cell * N)]->isUnknown())
-                continue;
-            if (bnCells[Col + (cell * N)]->getCurrentValue() != 0)
-                continue;
-            bool hit = bnCells[Col + (cell * N)]->getNote(i + 1);
-            if (hit)
-            {
-                Idx = Col + (cell * N);
-                ct++;
-            }
-        }
-        if (ct == 1)
-        {
-            CurrentCell = Idx;
-            CurrentRow = CurrentCell / N;
-            CurrentCol = CurrentCell % N;
-            handleNumberEntry(i + 1);
+    //for (int i = 0; i < N; i++)
+    //{
+    //    int ct = 0;
+    //    for (int cell = 0; cell < N; cell++)
+    //    {
+    //        if (!bnCells[Col + (cell * N)]->isUnknown())
+    //            continue;
+    //        if (bnCells[Col + (cell * N)]->getCurrentValue() != 0)
+    //            continue;
+    //        bool hit = bnCells[Col + (cell * N)]->getNote(i + 1);
+    //        if (hit)
+    //        {
+    //            Idx = Col + (cell * N);
+    //            ct++;
+    //        }
+    //    }
+    //    if (ct == 1)
+    //    {
+    //        CurrentCell = Idx;
+    //        CurrentRow = CurrentCell / N;
+    //        CurrentCol = CurrentCell % N;
+    //        handleNumberEntry(i + 1);
 
-            DBG("OnlyInCol " << i + 1 << " in " << (Idx / N) + 1 << "," << (Idx % N) + 1);
-        }
-    }
+    //        DBG("OnlyInCol " << i + 1 << " in " << (Idx / N) + 1 << "," << (Idx % N) + 1);
+    //    }
+    //}
 }
+
 void Sudoku::onlyInSquare(int square)
 {
-    int topLeftR = (square / NS) * NS;
-    int topLeftC = (square % NS) * NS;
-    int Idx = 0;
+    DBG("onlyInSquare " << square << " needs Rework");
+    //int topLeftR = (square / NS) * NS;
+    //int topLeftC = (square % NS) * NS;
+    //int Idx = 0;
 
-    for (int number = 0; number < N; number++)
-    {
-        //  check each number
-        int ct = 0;
-        for (int r = 0; r < NS; r++)
-        {
-            for (int c = 0; c < NS; c++)
-            {
-                int Ndx = ((topLeftR + r) * N) + topLeftC + c;
-                if (!bnCells[Ndx]->isUnknown())
-                    continue;
-                if (bnCells[Ndx]->getCurrentValue() != 0)
-                    continue;
-                bool hit = bnCells[Ndx]->getNote(number + 1);
-                if (hit)
-                {
-                    Idx = Ndx;
-                    ct++;
-                }
-            }
-        }
-        if (ct == 1)
-        {
-            CurrentCell = Idx;
-            CurrentRow = CurrentCell / N;
-            CurrentCol = CurrentCell % N;
-            handleNumberEntry(number + 1);
+    //for (int number = 0; number < N; number++)
+    //{
+    //    //  check each number
+    //    int ct = 0;
+    //    for (int r = 0; r < NS; r++)
+    //    {
+    //        for (int c = 0; c < NS; c++)
+    //        {
+    //            int Ndx = ((topLeftR + r) * N) + topLeftC + c;
+    //            if (!bnCells[Ndx]->isUnknown())
+    //                continue;
+    //            if (bnCells[Ndx]->getCurrentValue() != 0)
+    //                continue;
+    //            bool hit = bnCells[Ndx]->getNote(number + 1);
+    //            if (hit)
+    //            {
+    //                Idx = Ndx;
+    //                ct++;
+    //            }
+    //        }
+    //    }
+    //    if (ct == 1)
+    //    {
+    //        CurrentCell = Idx;
+    //        CurrentRow = CurrentCell / N;
+    //        CurrentCol = CurrentCell % N;
+    //        handleNumberEntry(number + 1);
 
-            DBG("OnlyInSqu " << square << " : " << number + 1 << " in " << CurrentRow + 1 << "," << CurrentCol + 1);
-        }
-    }
+    //        DBG("OnlyInSqu " << square << " : " << number + 1 << " in " << CurrentRow + 1 << "," << CurrentCol + 1);
+    //    }
+    //}
 }
 
 void Sudoku::handleClear()
@@ -999,7 +1216,7 @@ Cell* Sudoku::getCellxRow(int x, int Row)
 Cell* Sudoku::getCellxSqr(int x, int Square)
 {
     Cell*   reply = nullptr;
-    int     Idx;
+    int     Idx = 0;
 
     if (x < N && x >= 0)    //  Valid index
     {

@@ -41,6 +41,7 @@ public:
     int     getActualValue()    { return ActualValue;   }
     int     getCurrentValue()   { return CurrentValue;  }
     bool    isUnknown()         { return Unknown;       }
+    bool    isKnown();
     bool    hasPair()           { return countNotes() == 2; }
 private:
     Sudoku* pParent;

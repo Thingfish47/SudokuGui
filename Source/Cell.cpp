@@ -58,6 +58,13 @@ void Cell::setActualValue(int Value)
         setButtonText(String(ActualValue));
 }
 
+bool Cell::isKnown()
+{
+    if (Unknown == false && CurrentValue != 0)
+        return true;
+    return false;
+}
+
 bool Cell::isWrong()
 {
     if (CurrentValue == 0)
