@@ -20,7 +20,7 @@
 
 using namespace juce;
 
-#define     PAIRSDEBUG
+//#define     PAIRSDEBUG
 
 
 #define     VERSION_LIT     "Ver 3.3.1"
