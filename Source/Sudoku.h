@@ -93,14 +93,15 @@ private:    //  Functions
     bool solved();
     int  enterSolos();
     void printGrid();
-    void onlyInRow(int);
-    void onlyInCol(int);
-    void onlyInSquare(int);
+    bool onlyInRow(int);
+    //bool onlyInCol(int);
+    //bool onlyInSquare(int);
     bool checkPairsRow(int);
     bool checkPairsCol(int);
     bool checkPairsSquare(int);
-    bool checkHiddenPairsRow(int);
-    bool checkHiddenPairsCol(int);
+    bool checkHiddenMatchedPairsRow(int);
+    bool checkHiddenMatchedPairsCol(int);
+    bool checkHiddenMatchedPairsSquare(int);
     bool checkHiddenPairsSquare(int);
     Cell* getCellxCol(int x, int Col);
     Cell* getCellxRow(int x, int Row);
@@ -108,6 +109,8 @@ private:    //  Functions
     int  getIdxxCol(int x, int Col);
     int  getIdxxRow(int x, int Row);
     int  getIdxxSqr(int x, int Sqr);
+    String cellToRowCol(int);
+    void setMatchedPairs();
 public:     //  Data
 private:    //  Data
     int     NumberToRemove;
@@ -117,6 +120,7 @@ private:    //  Data
     int     CurrentCol;
     int     Height;
     int     Width;
+    int     Phase = 0;
     SudokuButtonLnF                 sbLnF;
     NumberButtonLnF                 nbLnF;
     std::unique_ptr<Pair>           matchedPairs[N*N];

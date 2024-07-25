@@ -28,6 +28,7 @@ public:
     bool    getNote(int number);
     bool    checkCorrect();
     bool    isWrong();
+    bool    isKnown();
     void    toggleNote (int x);
     void    clearNote (int x);
     void    resetCell(int);
@@ -41,11 +42,12 @@ public:
     int     getActualValue()    { return ActualValue;   }
     int     getCurrentValue()   { return CurrentValue;  }
     bool    isUnknown()         { return Unknown;       }
-    bool    isKnown();
+    void    setMyIndex(int x)   { MyIndex = x;          }
     bool    hasPair()           { return countNotes() == 2; }
 private:
     Sudoku* pParent;
     bool    Unknown;
+    int     MyIndex;
     int     ActualValue;
     int     CurrentValue;
     bool    Notes[9];
