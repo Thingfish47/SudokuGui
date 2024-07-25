@@ -62,6 +62,7 @@ private:    //  Functions
     void mouseUp(const MouseEvent&) override;
     void createButtons();
     void handleQuit();
+    void handleTest();
     void handleClear();
     void handleNew();
     void handleLoad();
@@ -91,11 +92,10 @@ private:    //  Functions
     bool isInCol(int col, int number);
     void setSolved();
     bool solved();
-    int  enterSolos();
     void printGrid();
     bool onlyInRow(int);
-    //bool onlyInCol(int);
-    //bool onlyInSquare(int);
+    bool onlyInCol(int);
+    bool onlyInSquare(int);
     bool checkPairsRow(int);
     bool checkPairsCol(int);
     bool checkPairsSquare(int);
@@ -146,6 +146,7 @@ private:    //  Data
     std::unique_ptr<TextButton>     bnEnter;
     std::unique_ptr<TextButton>     bnLoad;
     std::unique_ptr<TextButton>     bnSave;
+    std::unique_ptr<TextButton>     bnTest;
     //
     std::unique_ptr<TextButton>     bnOne;
     std::unique_ptr<TextButton>     bnTwo;

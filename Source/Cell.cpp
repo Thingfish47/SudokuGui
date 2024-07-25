@@ -33,6 +33,7 @@ void Cell::resetCell(int Value)
     CurrentValue = Value;
     String txt = String(Value);
     setButtonText(txt);
+    setEnabled(true);
 }
 
 void Cell::setCurrentValue(int Value)
