@@ -10,6 +10,9 @@
 
 #pragma once
 
+#include <JuceHeader.h>
+
+using namespace juce;
 
 class Pair
 {
@@ -33,7 +36,7 @@ public:
     bool operator==(const Pair& other) const {
         return (first == other.first) && (second == other.second);
     }
-
+    String toString();
     const int get1st() { return first; }
     const int get2nd() { return second; }
 private:

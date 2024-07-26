@@ -96,13 +96,13 @@ private:    //  Functions
     bool onlyInRow(int);
     bool onlyInCol(int);
     bool onlyInSquare(int);
-    bool checkPairsRow(int);
-    bool checkPairsCol(int);
-    bool checkPairsSquare(int);
+    bool check_Pairs_In_Row(int);
+    bool check_Pairs_In_Col(int);
+    bool check_Pairs_In_Square(int);
     bool checkHiddenMatchedPairsRow(int);
     bool checkHiddenMatchedPairsCol(int);
-    bool checkHiddenMatchedPairsSquare(int);
-    bool checkHiddenPairsSquare(int);
+    bool check_Hidden_Matched_Pairs_In_Square(int);
+    bool check_Hidden_Pairs_In_Square(int);
     Cell* getCellxCol(int x, int Col);
     Cell* getCellxRow(int x, int Row);
     Cell* getCellxSqr(int x, int Sqr);

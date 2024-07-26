@@ -33,4 +33,8 @@ Pair::Pair()
 	second = 0;
 }
 
-
+String Pair::toString()
+{
+    String txt = String(first+1) + " " + String(second+1);
+    return txt;
+}
