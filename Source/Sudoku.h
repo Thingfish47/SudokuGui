@@ -120,7 +120,6 @@ private:    //  Data
     int     CurrentCol;
     int     Height;
     int     Width;
-    int     Phase = 0;
     SudokuButtonLnF                 sbLnF;
     NumberButtonLnF                 nbLnF;
     std::unique_ptr<Pair>           matchedPairs[N*N];
