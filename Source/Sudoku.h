@@ -99,8 +99,8 @@ private:    //  Functions
     bool check_Pairs_In_Row(int);
     bool check_Pairs_In_Col(int);
     bool check_Pairs_In_Square(int);
-    bool checkHiddenMatchedPairsRow(int);
-    bool checkHiddenMatchedPairsCol(int);
+    bool check_Hidden_Matched_Pairs_In_Row(int);
+    bool check_Hidden_Matched_Pairs_In_Col(int);
     bool check_Hidden_Matched_Pairs_In_Square(int);
     bool check_Hidden_Pairs_In_Square(int);
     Cell* getCellxCol(int x, int Col);
@@ -111,6 +111,9 @@ private:    //  Functions
     int  getIdxxSqr(int x, int Sqr);
     String cellToRowCol(int);
     void setMatchedPairs();
+    void createLogFile(String);
+    void log (String);
+    void solveTheSudoku();
 public:     //  Data
 private:    //  Data
     int     NumberToRemove;
@@ -122,6 +125,7 @@ private:    //  Data
     int     Width;
     SudokuButtonLnF                 sbLnF;
     NumberButtonLnF                 nbLnF;
+    std::unique_ptr<FileOutputStream>   Logfile;
     std::unique_ptr<Pair>           matchedPairs[N*N];
     std::unique_ptr<SudokuGrid>     grid;
     std::unique_ptr<SudokuGrid>     hold;

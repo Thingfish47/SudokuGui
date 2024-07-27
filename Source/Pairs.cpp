@@ -35,6 +35,6 @@ Pair::Pair()
 
 String Pair::toString()
 {
-    String txt = String(first+1) + " " + String(second+1);
+    String txt = "{" + String(first) + " " + String(second) + "}";
     return txt;
 }

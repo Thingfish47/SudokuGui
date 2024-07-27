@@ -894,7 +894,7 @@ bool Sudoku::check_Hidden_Pairs_In_Square(int square)
     return Result;
 }
 
-bool Sudoku::checkHiddenMatchedPairsRow(int row)
+bool Sudoku::check_Hidden_Matched_Pairs_In_Row(int row)
 {
     bool    Result = false;
     int     Tots[N] = { 0 };
@@ -977,7 +977,7 @@ bool Sudoku::checkHiddenMatchedPairsRow(int row)
     return Result;
 }
 
-bool Sudoku::checkHiddenMatchedPairsCol(int col)
+bool Sudoku::check_Hidden_Matched_Pairs_In_Col(int col)
 {
     bool    Result = false;
     int     Tots[N] = { 0 };
@@ -1066,7 +1066,7 @@ bool Sudoku::check_Hidden_Matched_Pairs_In_Square(int square)
     int     p1 = 0;
     int     p2 = 0;
 
-    DBG("check_Hidden_Matched_Pairs_In_Square " << square + 1);
+    //DBG("check_Hidden_Matched_Pairs_In_Square " << square + 1);
     for (int i = 0; i < N ; i++)
     {
         int Idx = getIdxxSqr(i, square);
@@ -1108,7 +1108,7 @@ bool Sudoku::check_Hidden_Matched_Pairs_In_Square(int square)
                                 {
                                     bool CauseReported = false;
                                     String event;
-                                    Pair pair(p1, p2);
+                                    Pair pair(p1+1, p2+1);
                                     Cell2 = Idx;
                                     Tots[i] = 0;
                                     Tots[j] = 0;
@@ -1121,23 +1121,31 @@ bool Sudoku::check_Hidden_Matched_Pairs_In_Square(int square)
                                             if (!CauseReported)
                                             {
                                                 CauseReported = true;
-                                                event << "check_Hidden_Matched_Pairs_In_Square(" << square + 1 << ") found [" << pair.toString() << "] in " << cellToRowCol(Cell1) << " and " << cellToRowCol(Cell2);
+                                                event << "check_Hidden_Matched_Pairs_In_Square(" << square + 1 << ") found " << pair.toString() << " in " << cellToRowCol(Cell1) << " and " << cellToRowCol(Cell2);
                                                 DBG(event);
+                                                log(event);
                                             }
+                                            String action;
+                                            action << "    so (S) cleared " << num + 1 << " in cell " << cellToRowCol(Cell1);
+                                            DBG(action);
+                                            log(action);
                                             bnCells[Cell1]->clearNote(num + 1);
-                                            DBG("    so (S) cleared " << num + 1 << " in cell " << cellToRowCol(Cell1));
                                             Result = true;
                                         }
                                         if (bnCells[Cell2]->getNote(num + 1))
                                         {
+                                            String action;
                                             if (!CauseReported)
                                             {
                                                 CauseReported = true;
-                                                event << "check_Hidden_Matched_Pairs_In_Square(" << square + 1 << ") found [" << pair.toString() << "] in " << cellToRowCol(Cell1) << " and " << cellToRowCol(Cell2);
+                                                event << "check_Hidden_Matched_Pairs_In_Square(" << square + 1 << ") found " << pair.toString() << " in " << cellToRowCol(Cell1) << " and " << cellToRowCol(Cell2);
                                                 DBG(event);
+                                                log(event);
                                             }
+                                            action << "    so (S) cleared " << num + 1 << " in cell " << cellToRowCol(Cell2);
+                                            DBG(action);
+                                            log(action);
                                             bnCells[Cell2]->clearNote(num + 1);
-                                            DBG("    so (S) cleared " << num + 1 << " in cell " << cellToRowCol(Cell2));
                                             Result = true;
                                         }
                                     }
@@ -1153,26 +1161,34 @@ bool Sudoku::check_Hidden_Matched_Pairs_In_Square(int square)
                                                 continue;
                                             if (bnCells[idx]->getNote(p1 + 1))
                                             {
+                                                String action;
                                                 if (!CauseReported)
                                                 {
                                                     CauseReported = true;
-                                                    event << "check_Hidden_Matched_Pairs_In_Square(" << square + 1 << ") found [" << pair.toString() << "] in " << cellToRowCol(Cell1) << " and " << cellToRowCol(Cell2);
+                                                    event << "check_Hidden_Matched_Pairs_In_Square(" << square + 1 << ") found " << pair.toString() << " in " << cellToRowCol(Cell1) << " and " << cellToRowCol(Cell2);
                                                     DBG(event);
+                                                    log(event);
                                                 }
+                                                action << "    so (R) cleared " << p1 + 1 << " in cell " << cellToRowCol(idx);
+                                                DBG(action);
+                                                log(action);
                                                 bnCells[idx]->clearNote(p1 + 1);
-                                                DBG("    so (R) cleared " << p1 + 1 << " in cell " << cellToRowCol(idx));
                                                 Result = true;
                                             }
                                             if (bnCells[idx]->getNote(p2 + 1))
                                             {
+                                                String action;
                                                 if (!CauseReported)
                                                 {
                                                     CauseReported = true;
-                                                    event << "check_Hidden_Matched_Pairs_In_Square(" << square + 1 << ") found [" << pair.toString() << "] in " << cellToRowCol(Cell1) << " and " << cellToRowCol(Cell2);
+                                                    event << "check_Hidden_Matched_Pairs_In_Square(" << square + 1 << ") found " << pair.toString() << " in " << cellToRowCol(Cell1) << " and " << cellToRowCol(Cell2);
                                                     DBG(event);
+                                                    log(event);
                                                 }
+                                                action << "    so (R) cleared " << p2 + 1 << " in cell " << cellToRowCol(idx);
+                                                DBG(action);
+                                                log(action);
                                                 bnCells[idx]->clearNote(p2 + 1);
-                                                DBG("    so (R) cleared " << p2 + 1 << " in cell " << cellToRowCol(idx));
                                                 Result = true;
                                             }
                                         }
@@ -1189,34 +1205,38 @@ bool Sudoku::check_Hidden_Matched_Pairs_In_Square(int square)
                                                 continue;
                                             if (bnCells[idx]->getNote(p1 + 1))
                                             {
+                                                String action;
                                                 if (!CauseReported)
                                                 {
                                                     CauseReported = true;
-                                                    event << "check_Hidden_Matched_Pairs_In_Square(" << square + 1 << ") found [" << pair.toString() << "] in " << cellToRowCol(Cell1) << " and " << cellToRowCol(Cell2);
+                                                    event << "check_Hidden_Matched_Pairs_In_Square(" << square + 1 << ") found " << pair.toString() << " in " << cellToRowCol(Cell1) << " and " << cellToRowCol(Cell2);
                                                     DBG(event);
+                                                    log(event);
                                                 }
+                                                action << "    so (C) cleared " << p1 + 1 << " in cell " << cellToRowCol(idx);
+                                                DBG(action);
+                                                log(action);
                                                 bnCells[idx]->clearNote(p1 + 1);
-                                                DBG("    so (C) cleared " << p1 + 1 << " in cell " << cellToRowCol(idx));
                                                 Result = true;
                                             }
                                             if (bnCells[idx]->getNote(p2 + 1))
                                             {
+                                                String action;
                                                 if (!CauseReported)
                                                 {
                                                     CauseReported = true;
-                                                    event << "check_Hidden_Matched_Pairs_In_Square(" << square + 1 << ") found [" << pair.toString() << "] in " << cellToRowCol(Cell1) << " and " << cellToRowCol(Cell2);
+                                                    event << "check_Hidden_Matched_Pairs_In_Square(" << square + 1 << ") found " << pair.toString() << " in " << cellToRowCol(Cell1) << " and " << cellToRowCol(Cell2);
                                                     DBG(event);
-                                                }
+                                                    log(event);
+                                               }
+                                                action << "    so (C) cleared " << p2 + 1 << " in cell " << cellToRowCol(idx);
+                                                DBG(action);
+                                                log(action);
                                                 bnCells[idx]->clearNote(p2 + 1);
-                                                DBG("    so (C) cleared " << p2 + 1 << " in cell " << cellToRowCol(idx));
                                                 Result = true;
                                             }
                                         }
                                     }
-                                    //else
-                                    //{
-                                    //    DBG("No bloody use.");
-                                    //}
                                 }
                                 continue;
                             }
@@ -1235,6 +1255,7 @@ bool Sudoku::check_Pairs_In_Row(int row)
     int IdxB = 0;
     bool    Changes = false;
 
+    //DBG("check_Pairs_In_Row " << row + 1);
     for (int i = 0; i < N-1; i++)
     {
         IdxA = getIdxxRow(i, row);
@@ -1258,25 +1279,33 @@ bool Sudoku::check_Pairs_In_Row(int row)
                         continue;
                     if (bnCells[Idx]->getNote(matchedPairs[IdxA]->get1st()))
                     {
+                        String action;
                         if (!CauseReported)
                         {
                             CauseReported = true;
                             event << "check_Pairs_In_Row(" << row + 1 << ") found " << matchedPairs[IdxA]->toString() << " in " << cellToRowCol(IdxA) << " and " << cellToRowCol(IdxB);
                             DBG(event);
+                            log(event);
                         }
-                        DBG("    so cleared " << matchedPairs[IdxA]->get1st() << " in " << cellToRowCol(Idx));
+                        action << "    so cleared " << matchedPairs[IdxA]->get1st() << " in " << cellToRowCol(Idx);
+                        DBG(action);
+                        log(action);
                         bnCells[Idx]->clearNote(matchedPairs[IdxA]->get1st());
                         Changes = true;
                     }
                     if (bnCells[Idx]->getNote(matchedPairs[IdxA]->get2nd()))
                     {
+                        String action;
                         if (!CauseReported)
                         {
                             CauseReported = true;
                             event << "check_Pairs_In_Row(" << row + 1 << ") found " << matchedPairs[IdxA]->toString() << " in " << cellToRowCol(IdxA) << " and " << cellToRowCol(IdxB);
                             DBG(event);
-                        }
-                        DBG("    so cleared " << matchedPairs[IdxA]->get2nd() << " in " << cellToRowCol(Idx));
+                            log(event);
+                       }
+                        action << "    so cleared " << matchedPairs[IdxA]->get2nd() << " in " << cellToRowCol(Idx);
+                        DBG(action);
+                        log(action);
                         bnCells[Idx]->clearNote(matchedPairs[IdxA]->get2nd());
                         Changes = true;
                     }
@@ -1293,6 +1322,7 @@ bool Sudoku::check_Pairs_In_Col(int col)
     int IdxB = 0;
     bool    Changes = false;
 
+    //DBG("check_Pairs_In_Col " << col + 1);
     for (int i = 0; i < N - 1; i++)
     {
         IdxA = getIdxxCol(i, col);
@@ -1316,25 +1346,33 @@ bool Sudoku::check_Pairs_In_Col(int col)
                         continue;
                     if (bnCells[Idx]->getNote(matchedPairs[IdxA]->get1st()))
                     {
+                        String action;
                         if (!CauseReported)
                         {
                             CauseReported = true;
-                            event << "check_Pairs_In_Col(" << col + 1 << ") found [" << matchedPairs[IdxA]->toString() << "] in " << cellToRowCol(IdxA) << " and " << cellToRowCol(IdxB);
+                            event << "check_Pairs_In_Col(" << col + 1 << ") found " << matchedPairs[IdxA]->toString() << " in " << cellToRowCol(IdxA) << " and " << cellToRowCol(IdxB);
                             DBG(event);
+                            log(event);
                         }
-                        DBG("    so cleared " << matchedPairs[IdxA]->get1st() << " in " << cellToRowCol(Idx));
+                        action << "    so cleared " << matchedPairs[IdxA]->get1st() << " in " << cellToRowCol(Idx);
+                        DBG(action);
+                        log(action);
                         bnCells[Idx]->clearNote(matchedPairs[IdxA]->get1st());
                         Changes = true;
                     }
                     if (bnCells[Idx]->getNote(matchedPairs[IdxA]->get2nd()))
                     {
+                        String action;
                         if (!CauseReported)
                         {
                             CauseReported = true;
-                            event << "check_Pairs_In_Col(" << col + 1 << ") found [" << matchedPairs[IdxA]->toString() << "] in " << cellToRowCol(IdxA) << " and " << cellToRowCol(IdxB);
+                            event << "check_Pairs_In_Col(" << col + 1 << ") found " << matchedPairs[IdxA]->toString() << " in " << cellToRowCol(IdxA) << " and " << cellToRowCol(IdxB);
                             DBG(event);
-                        }
-                        DBG("    so cleared " << matchedPairs[IdxA]->get2nd() << " in " << cellToRowCol(Idx));
+                            log(event);
+                       }
+                        action << "    so cleared " << matchedPairs[IdxA]->get2nd() << " in " << cellToRowCol(Idx);
+                        DBG(action);
+                        log(action);
                         bnCells[Idx]->clearNote(matchedPairs[IdxA]->get2nd());
                         Changes = true;
                     }
@@ -1374,25 +1412,32 @@ bool Sudoku::check_Pairs_In_Square(int square)
                         continue;
                     if (bnCells[Idx]->getNote(matchedPairs[IdxA]->get1st()))
                     {
+                        String action;
                         if (!CauseReported)
                         {
                             CauseReported = true;
                             event << "check_Pairs_In_Square(" << square + 1 << ") found " << matchedPairs[IdxA]->toString() << " in " << cellToRowCol(IdxA) << " and " << cellToRowCol(IdxB);
                             DBG(event);
+                            log(event);
                         }
-                        DBG("    so cleared " << matchedPairs[IdxA]->get1st() << " in " << cellToRowCol(Idx));
+                        action << "    so cleared " << matchedPairs[IdxA]->get1st() << " in " << cellToRowCol(Idx);
+                        DBG(action);
+                        log(action);
                         bnCells[Idx]->clearNote(matchedPairs[IdxA]->get1st());
                         Changes = true;
                     }
                     if (bnCells[Idx]->getNote(matchedPairs[IdxA]->get2nd()))
                     {
+                        String action;
                         if (!CauseReported)
                         {
                             CauseReported = true;
                             event << "check_Pairs_In_Square(" << square + 1 << ") found " << matchedPairs[IdxA]->toString() << " in " << cellToRowCol(IdxA) << " and " << cellToRowCol(IdxB);
                             DBG(event);
                         }
-                        DBG("    so cleared " << matchedPairs[IdxA]->get2nd() << " in " << cellToRowCol(Idx));
+                        action << "    so cleared " << matchedPairs[IdxA]->get2nd() << " in " << cellToRowCol(Idx);
+                        DBG(action);
+                        log(action);
                         bnCells[Idx]->clearNote(matchedPairs[IdxA]->get2nd());
                         Changes = true;
                     }
@@ -1425,6 +1470,7 @@ bool Sudoku::onlyInRow(int row)
 
     for (num = 0; num < N; num++)
     {
+        String event;
         if (Tots[num] == 1)
         {
             for (int i = 0; i < N; i++)
@@ -1433,7 +1479,8 @@ bool Sudoku::onlyInRow(int row)
                 if (bnCells[Idx]->getNote(num + 1))
                     break;
             }
-            event << "The only " << num+1 << " in Row " << row+1 << "    entered in " << cellToRowCol(Idx);
+            event.clear();
+            event << "The only " << num+1 << " in Row " << row+1 << ".    Entered " << num + 1 << " in " << cellToRowCol(Idx);
             DBG(event);
             log(event);
             CurrentCell = Idx;
@@ -1469,6 +1516,7 @@ bool Sudoku::onlyInCol(int col)
 
     for (num = 0; num < N; num++)
     {
+        String event;
         if (Tots[num] == 1)
         {
             for (int i = 0; i < N; i++)
@@ -1477,7 +1525,7 @@ bool Sudoku::onlyInCol(int col)
                 if (bnCells[Idx]->getNote(num + 1))
                     break;
             }
-            event << "The only " << num + 1 << " in Col " << col + 1 << "    entered in " << cellToRowCol(Idx);
+            event << "The only " << num + 1 << " in Col " << col + 1 << ".    Entered " << num + 1 << " in " << cellToRowCol(Idx);  
             DBG(event);
             log(event);
             CurrentCell = Idx;
@@ -1513,6 +1561,7 @@ bool Sudoku::onlyInSquare(int square)
 
     for (num = 0; num < N; num++)
     {
+        String event;
         if (Tots[num] == 1)
         {
             for (int i = 0; i < N; i++)
@@ -1521,7 +1570,7 @@ bool Sudoku::onlyInSquare(int square)
                 if (bnCells[Idx]->getNote(num + 1))
                     break;
             }
-            event << "The only " << num + 1 << " in Square " << square + 1 << " entered in " << cellToRowCol(Idx);
+            event << "The only " << num + 1 << " in Square " << square + 1 << ". Entered " << num+1 << " in " << cellToRowCol(Idx);
             DBG(event);
             log(event);
             CurrentCell = Idx;
